@@ -2,10 +2,11 @@ package it.polimi.polishare.server;
 
 import it.polimi.polishare.common.DHT.DHT;
 import it.polimi.polishare.common.DHT.DHTException;
+import it.polimi.polishare.common.DHT.NoteMetaData;
 import it.polimi.polishare.server.network.DHT.DHTImpl;
 
 public class App {
-    private static DHT<String> dht;
+    private static DHT<NoteMetaData> dht;
 
     public static void main( String[] args ) {
         try {
