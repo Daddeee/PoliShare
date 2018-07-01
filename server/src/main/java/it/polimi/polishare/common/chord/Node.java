@@ -4,6 +4,7 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 public interface Node extends Remote {
     String getName() throws RemoteException;
@@ -42,11 +43,11 @@ public interface Node extends Remote {
 
     void removeStored(Key k) throws RemoteException;
 
-    List<Object> broadcast(Node limit) throws RemoteException;
+    List<Object> broadcast(Predicate<Object> predicate, Node limit) throws RemoteException;
 
     Object get(Key k) throws RemoteException;
 
-    List<Object> getAll() throws RemoteException;
+    List<Object> get(Predicate<Object> predicate) throws RemoteException;
 
     void repliedPut(Key k, Object value) throws RemoteException;
 

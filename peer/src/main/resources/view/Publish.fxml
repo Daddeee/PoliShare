@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import com.jfoenix.controls.JFXTextField?>
+<?import com.jfoenix.validation.RequiredFieldValidator?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.validation.NumberValidator?>
+<?import it.polimi.polishare.peer.utils.PdfValidator ?>
+
+<StackPane fx:id="root" xmlns="http://javafx.com/javafx/8.0.162-ea" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <VBox prefWidth="300" spacing="40" maxWidth="400" alignment="CENTER">
+            <children>
+                <HBox prefHeight="20" maxWidth="300">
+                    <JFXTextField fx:id="title" promptText="Titolo" prefHeight="20">
+                        <validators>
+                            <RequiredFieldValidator message="Campo richiesto!">
+                                <FontAwesomeIconView glyphName="WARNING" style="-fx-font-family: FontAwesome;"/>
+                            </RequiredFieldValidator>
+                        </validators>
+                    </JFXTextField>
+                </HBox>
+                <HBox prefHeight="20" maxWidth="300">
+                    <JFXTextField fx:id="author" promptText="Autore" prefHeight="20">
+                        <validators>
+                            <RequiredFieldValidator message="Campo richiesto!">
+                                <FontAwesomeIconView glyphName="WARNING" style="-fx-font-family: FontAwesome;"/>
+                            </RequiredFieldValidator>
+                        </validators>
+                    </JFXTextField>
+                </HBox>
+                <HBox prefHeight="20" maxWidth="300">
+                    <JFXTextField fx:id="subject" promptText="Corso" prefHeight="20">
+                        <validators>
+                            <RequiredFieldValidator message="Campo richiesto!">
+                                <FontAwesomeIconView glyphName="WARNING" style="-fx-font-family: FontAwesome;"/>
+                            </RequiredFieldValidator>
+                        </validators>
+                    </JFXTextField>
+                </HBox>
+                <HBox prefHeight="20" maxWidth="300">
+                    <JFXTextField fx:id="teacher" promptText="Professore" prefHeight="20">
+                        <validators>
+                            <RequiredFieldValidator message="Campo richiesto!">
+                                <FontAwesomeIconView glyphName="WARNING" style="-fx-font-family: FontAwesome;"/>
+                            </RequiredFieldValidator>
+                        </validators>
+                    </JFXTextField>
+                </HBox>
+                <HBox prefHeight="20" maxWidth="300">
+                    <JFXTextField fx:id="year" promptText="Anno" prefHeight="20">
+                        <validators>
+                            <RequiredFieldValidator message="Campo richiesto!">
+                                <FontAwesomeIconView glyphName="WARNING" style="-fx-font-family: FontAwesome;"/>
+                            </RequiredFieldValidator>
+                            <NumberValidator message="Deve essere un numero!">
+                                <FontAwesomeIconView glyphName="WARNING" style="-fx-font-family: FontAwesome;"/>
+                            </NumberValidator>
+                        </validators>
+                    </JFXTextField>
+                </HBox>
+                <HBox prefHeight="20" maxWidth="300">
+                    <JFXButton onAction="#searchPath" prefWidth="20" prefHeight="20" buttonType="FLAT" text="+"
+                               style="-fx-font-size:14px;"/>
+                    <JFXTextField fx:id="path" promptText="Percorso" prefHeight="20">
+                        <validators>
+                            <RequiredFieldValidator message="Campo richiesto!">
+                                <FontAwesomeIconView glyphName="WARNING" style="-fx-font-family: FontAwesome;"/>
+                            </RequiredFieldValidator>
+                            <PdfValidator message="File non trovato!">
+                                <FontAwesomeIconView glyphName="WARNING" style="-fx-font-family: FontAwesome;"/>
+                            </PdfValidator>
+                        </validators>
+                    </JFXTextField>
+                </HBox>
+                <JFXButton onAction="#save" prefWidth="100" prefHeight="40" buttonType="FLAT" text="Salva"
+                           style="-fx-text-fill: WHITE; -fx-background-color: rgb(102.0, 153.0, 102.0);-fx-font-size:14px;"/>
+            </children>
+        </VBox>
+    </children>
+</StackPane>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import com.jfoenix.controls.JFXTreeTableColumn?>
+<?import com.jfoenix.controls.JFXTreeTableView?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<?import javafx.scene.control.Label?>
+<?import com.jfoenix.validation.NumberValidator?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import com.jfoenix.controls.JFXComboBox?>
+<StackPane fx:id="root" xmlns="http://javafx.com/javafx/8.0.162-ea" xmlns:fx="http://javafx.com/fxml/1">
+    <VBox spacing="30.0">
+        <Label prefHeight="20.0"/>
+        <HBox fx:id="filterBox" >
+            <VBox spacing="10.0" HBox.hgrow="ALWAYS" alignment="CENTER_RIGHT">
+                <JFXTextField fx:id="titleField" promptText="Titolo..." VBox.vgrow="ALWAYS"/>
+                <JFXTextField fx:id="authorField" promptText="Autore..." VBox.vgrow="ALWAYS"/>
+                <JFXTextField fx:id="subjectField" promptText="Materia..." VBox.vgrow="ALWAYS"/>
+                <HBox.margin>
+                    <Insets left="20.0" right="20.0"/>
+                </HBox.margin>
+            </VBox>
+            <VBox spacing="10.0" HBox.hgrow="ALWAYS" alignment="CENTER_LEFT">
+                <JFXTextField fx:id="teacherField" promptText="Professore..." VBox.vgrow="ALWAYS"/>
+                <JFXTextField fx:id="yearField" promptText="Anno..." prefHeight="20" VBox.vgrow="ALWAYS">
+                    <validators>
+                        <NumberValidator message="Deve essere un numero!">
+                            <FontAwesomeIconView glyphName="WARNING" style="-fx-font-family: FontAwesome;"/>
+                        </NumberValidator>
+                    </validators>
+                </JFXTextField>
+                <JFXComboBox fx:id="rating" promptText="Valutazione minima" VBox.vgrow="ALWAYS"/>
+                <HBox.margin>
+                    <Insets left="20.0" right="20.0"/>
+                </HBox.margin>
+            </VBox>
+        </HBox>
+        <HBox spacing="20.0" alignment="CENTER">
+            <JFXButton buttonType="FLAT" onAction="#query" style="-fx-text-fill: WHITE; -fx-background-color: rgb(102.0, 153.0, 102.0);-fx-font-size:14px;" text="Cerca" />
+            <JFXButton buttonType="FLAT" onAction="#download" style="-fx-text-fill: WHITE; -fx-background-color: rgb(102.0, 153.0, 102.0);-fx-font-size:14px;" text="Scarica" />
+            <JFXButton buttonType="FLAT" onAction="#clear" style="-fx-text-fill: WHITE; -fx-background-color: rgb(102.0, 153.0, 102.0);-fx-font-size:14px;" text="Cancella" />
+        </HBox>
+        <JFXTreeTableView fx:id="catalogTreeTableView" VBox.vgrow="ALWAYS">
+            <columns>
+                <JFXTreeTableColumn fx:id="titleColumn" text="Titolo" />
+                <JFXTreeTableColumn fx:id="subjectColumn" text="Materia" />
+                <JFXTreeTableColumn fx:id="authorColumn" text="Autore" />
+                <JFXTreeTableColumn fx:id="teacherColumn" text="Docente" />
+                <JFXTreeTableColumn fx:id="yearColumn" text="Anno" />
+            </columns>
+        </JFXTreeTableView>
+        <StackPane.margin>
+            <Insets bottom="40" left="40.0" right="40.0" />
+        </StackPane.margin>
+    </VBox>
+</StackPane>

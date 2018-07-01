@@ -1,6 +1,7 @@
 package it.polimi.polishare.common.DHT;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 public interface DHT<T> {
     void join(String ip, String nodeName) throws DHTException;
@@ -15,5 +16,5 @@ public interface DHT<T> {
 
     void remove(String key) throws DHTException;
 
-    List<T> getAll() throws DHTException;
+    List<T> query(Predicate<T> predicate) throws DHTException;
 }

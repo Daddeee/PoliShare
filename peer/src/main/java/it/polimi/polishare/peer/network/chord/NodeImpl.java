@@ -9,6 +9,8 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class NodeImpl extends UnicastRemoteObject implements Node {
     private static final int R = 10;
@@ -53,8 +55,8 @@ public class NodeImpl extends UnicastRemoteObject implements Node {
     }
 
     @Override
-    public List<Object> getAll() throws RemoteException {
-        List<Object> result = new ArrayList<>(storage.values());
+    public List<Object> get(Predicate<Object> predicate) throws RemoteException {
+        List<Object> result = storage.values().stream().filter(predicate).collect(Collectors.toList());
         List<Object> tmp;
         Node limit;
 
@@ -63,7 +65,7 @@ public class NodeImpl extends UnicastRemoteObject implements Node {
             if (!fingers[i].getKey().equals(fingers[i+1].getKey())){
                 limit = fingers[i+1];
 
-                tmp = fingers[i].broadcast(limit);
+                tmp = fingers[i].broadcast(predicate, limit);
                 result.addAll(tmp);
             }
             i++;
@@ -71,7 +73,7 @@ public class NodeImpl extends UnicastRemoteObject implements Node {
 
 
         if(!fingers[i].getKey().equals(this.key)) { //avoid broadcast themselves
-            tmp = fingers[i].broadcast(this);
+            tmp = fingers[i].broadcast(predicate, this);
             result.addAll(tmp);
         }
 
@@ -79,8 +81,8 @@ public class NodeImpl extends UnicastRemoteObject implements Node {
     }
 
     @Override
-    public List<Object> broadcast(Node limit) throws RemoteException {
-        List<Object> result = new ArrayList<>(storage.values());
+    public List<Object> broadcast(Predicate<Object> predicate, Node limit) throws RemoteException {
+        List<Object> result = storage.values().stream().filter(predicate).collect(Collectors.toList());
         List<Object> tmp;
         Node newLimit;
 
@@ -94,7 +96,7 @@ public class NodeImpl extends UnicastRemoteObject implements Node {
                     else
                         newLimit = limit;
 
-                    tmp = fingers[i].broadcast(newLimit);
+                    tmp = fingers[i].broadcast(predicate, newLimit);
                     result.addAll(tmp);
                 } else {
                     break;
@@ -104,7 +106,7 @@ public class NodeImpl extends UnicastRemoteObject implements Node {
         }
 
         if(!this.key.equals(limit.getKey()) && fingers[i].getKey().isRingBetween(this.key, limit.getKey())) {
-            tmp = fingers[i].broadcast(limit);
+            tmp = fingers[i].broadcast(predicate, limit);
             result.addAll(tmp);
         }
 

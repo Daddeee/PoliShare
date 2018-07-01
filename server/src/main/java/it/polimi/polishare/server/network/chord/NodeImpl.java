@@ -9,13 +9,13 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class NodeImpl extends UnicastRemoteObject implements Node {
     private static final int R = 10;
     private static final long serialVersionUID = 1337L;
     private static final int RMI_DEFAULT_PORT = 1099;
-
-    private static Node activeNode;
 
     private String name;
     private Key key;
@@ -23,7 +23,6 @@ public class NodeImpl extends UnicastRemoteObject implements Node {
     private Node[] succList;
 
     private Node[] fingers;
-    private int fingersIndex;
 
     public TreeMap<Key, Object> storage;
     public TreeMap<Key, Map<Key, Object>> replicas;
@@ -56,8 +55,8 @@ public class NodeImpl extends UnicastRemoteObject implements Node {
     }
 
     @Override
-    public List<Object> getAll() throws RemoteException {
-        List<Object> result = new ArrayList<>(storage.values());
+    public List<Object> get(Predicate<Object> predicate) throws RemoteException {
+        List<Object> result = storage.values().stream().filter(predicate).collect(Collectors.toList());
         List<Object> tmp;
         Node limit;
 
@@ -66,7 +65,7 @@ public class NodeImpl extends UnicastRemoteObject implements Node {
             if (!fingers[i].getKey().equals(fingers[i+1].getKey())){
                 limit = fingers[i+1];
 
-                tmp = fingers[i].broadcast(limit);
+                tmp = fingers[i].broadcast(predicate, limit);
                 result.addAll(tmp);
             }
             i++;
@@ -74,7 +73,7 @@ public class NodeImpl extends UnicastRemoteObject implements Node {
 
 
         if(!fingers[i].getKey().equals(this.key)) { //avoid broadcast themselves
-            tmp = fingers[i].broadcast(this);
+            tmp = fingers[i].broadcast(predicate, this);
             result.addAll(tmp);
         }
 
@@ -82,8 +81,8 @@ public class NodeImpl extends UnicastRemoteObject implements Node {
     }
 
     @Override
-    public List<Object> broadcast(Node limit) throws RemoteException {
-        List<Object> result = new ArrayList<>(storage.values());
+    public List<Object> broadcast(Predicate<Object> predicate, Node limit) throws RemoteException {
+        List<Object> result = storage.values().stream().filter(predicate).collect(Collectors.toList());
         List<Object> tmp;
         Node newLimit;
 
@@ -97,7 +96,7 @@ public class NodeImpl extends UnicastRemoteObject implements Node {
                     else
                         newLimit = limit;
 
-                    tmp = fingers[i].broadcast(newLimit);
+                    tmp = fingers[i].broadcast(predicate, newLimit);
                     result.addAll(tmp);
                 } else {
                     break;
@@ -107,7 +106,7 @@ public class NodeImpl extends UnicastRemoteObject implements Node {
         }
 
         if(!this.key.equals(limit.getKey()) && fingers[i].getKey().isRingBetween(this.key, limit.getKey())) {
-            tmp = fingers[i].broadcast(limit);
+            tmp = fingers[i].broadcast(predicate, limit);
             result.addAll(tmp);
         }
 
@@ -181,7 +180,6 @@ public class NodeImpl extends UnicastRemoteObject implements Node {
 
         this.fingers = new Node[Key.m];
         Arrays.fill(this.fingers, this);
-        this.fingersIndex = 0;
     }
 
     @Override
@@ -208,7 +206,6 @@ public class NodeImpl extends UnicastRemoteObject implements Node {
 
         this.fingers = new Node[Key.m];
 
-        this.fingersIndex = 0;
         this.pred = null;
     }
 
@@ -298,12 +295,6 @@ public class NodeImpl extends UnicastRemoteObject implements Node {
         for(int i = 0; i < Key.m; i++) {
             fingers[i] = lookupSuccessor(this.key.sumPowerOf2(i));
         }
-        /*if(fingersIndex >= Key.m)
-            fingersIndex = 0;
-
-        fingers[fingersIndex] = lookupSuccessor(this.key.sumPowerOf2(fingersIndex));
-
-        fingersIndex++;*/
     }
 
     @Override
@@ -321,7 +312,6 @@ public class NodeImpl extends UnicastRemoteObject implements Node {
     public void stop(){
         try{
             UnicastRemoteObject.unexportObject(this, true);
-            activeNode = null;
         } catch (NoSuchObjectException e){
             e.printStackTrace();
         }
@@ -335,7 +325,6 @@ public class NodeImpl extends UnicastRemoteObject implements Node {
             registry = LocateRegistry.getRegistry(RMI_DEFAULT_PORT);
         }
         registry.rebind(name, this);
-        activeNode = this;
     }
 
     private boolean ping(Node node) {

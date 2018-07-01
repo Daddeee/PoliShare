@@ -11,11 +11,14 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.List;
+import java.util.function.Predicate;
 
 public class DHTImpl<T> implements DHT<T> {
     private Node node;
+    private Class<T> clazz;
 
-    public DHTImpl(String name) throws DHTException {
+    public DHTImpl(String name, Class<T> clazz) throws DHTException {
+        this.clazz = clazz;
         try{
             this.node = new NodeImpl(name);
         } catch (RemoteException e) {
@@ -84,9 +87,10 @@ public class DHTImpl<T> implements DHT<T> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<T> getAll() throws DHTException {
+    public List<T> query(Predicate<T> predicate) throws DHTException {
         try{
-            return (List<T>)node.getAll();
+            Predicate<Object> genericPredicate = o ->  clazz.isInstance(o) && predicate.test((T) o);
+            return (List<T>)node.get(genericPredicate);
         } catch (Exception e) {
             e.printStackTrace();
             throw new DHTException("Cannot broadcast read all: " + e.getMessage());
