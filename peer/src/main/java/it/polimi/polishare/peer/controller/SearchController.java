@@ -82,7 +82,6 @@ public class SearchController {
 
             notes = App.dht.query(queryPredicate);
         } catch (DHTException e) {
-            //TODO popup errori
             e.printStackTrace();
         }
 

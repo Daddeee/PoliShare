@@ -20,7 +20,7 @@ import javafx.stage.Stage;
 
 public class App  extends Application {
     public static DHT<NoteMetaData> dht;
-    private static final String USERNAME = "User1";
+    public static final String USERNAME = "User1";
     private static final String MY_IP = "localhost";
     private static final String SERVER_IP = "localhost";
     private static final String SERVER_NAME = "_SERVER_";
