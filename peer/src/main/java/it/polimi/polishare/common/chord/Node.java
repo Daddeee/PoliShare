@@ -43,11 +43,11 @@ public interface Node extends Remote {
 
     void removeStored(Key k) throws RemoteException;
 
-    List<Object> broadcast(Predicate<Object> predicate, Node limit) throws RemoteException;
+    List<Object> broadcast(Predicate predicate, Node limit) throws RemoteException;
 
     Object get(Key k) throws RemoteException;
 
-    List<Object> get(Predicate<Object> predicate) throws RemoteException;
+    List<Object> get(Predicate predicate) throws RemoteException;
 
     void repliedPut(Key k, Object value) throws RemoteException;
 

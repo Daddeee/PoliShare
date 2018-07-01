@@ -1,6 +1,4 @@
-package it.polimi.polishare.common.DHT;
-
-import it.polimi.polishare.common.Downloader;
+package it.polimi.polishare.common;
 
 import java.io.Serializable;
 import java.util.ArrayList;

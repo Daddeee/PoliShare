@@ -1,4 +1,4 @@
-package it.polimi.polishare.common.DHT;
+package it.polimi.polishare.common;
 
 import java.io.Serializable;
 import java.util.Objects;

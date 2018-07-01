@@ -6,6 +6,7 @@ import it.polimi.polishare.common.chord.Key;
 import it.polimi.polishare.common.chord.Node;
 import it.polimi.polishare.peer.network.chord.NodeImpl;
 
+import java.io.Serializable;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -89,8 +90,7 @@ public class DHTImpl<T> implements DHT<T> {
     @SuppressWarnings("unchecked")
     public List<T> query(Predicate<T> predicate) throws DHTException {
         try{
-            Predicate<Object> genericPredicate = o ->  clazz.isInstance(o) && predicate.test((T) o);
-            return (List<T>)node.get(genericPredicate);
+            return (List<T>)node.get(predicate);
         } catch (Exception e) {
             e.printStackTrace();
             throw new DHTException("Cannot broadcast read all: " + e.getMessage());

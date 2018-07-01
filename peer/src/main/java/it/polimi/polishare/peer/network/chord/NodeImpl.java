@@ -55,8 +55,9 @@ public class NodeImpl extends UnicastRemoteObject implements Node {
     }
 
     @Override
-    public List<Object> get(Predicate<Object> predicate) throws RemoteException {
-        List<Object> result = storage.values().stream().filter(predicate).collect(Collectors.toList());
+    @SuppressWarnings("unchecked")
+    public List<Object> get(Predicate predicate) throws RemoteException {
+        List<Object> result = storage.values().stream().filter((Predicate<? super Object>) predicate).collect(Collectors.toList());
         List<Object> tmp;
         Node limit;
 
@@ -81,8 +82,9 @@ public class NodeImpl extends UnicastRemoteObject implements Node {
     }
 
     @Override
-    public List<Object> broadcast(Predicate<Object> predicate, Node limit) throws RemoteException {
-        List<Object> result = storage.values().stream().filter(predicate).collect(Collectors.toList());
+    @SuppressWarnings("unchecked")
+    public List<Object> broadcast(Predicate predicate, Node limit) throws RemoteException {
+        List<Object> result = storage.values().stream().filter((Predicate<? super Object>) predicate).collect(Collectors.toList());
         List<Object> tmp;
         Node newLimit;
 

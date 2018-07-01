@@ -5,7 +5,7 @@ import io.datafx.controller.ViewController;
 import io.datafx.controller.flow.context.FXMLViewFlowContext;
 import io.datafx.controller.flow.context.ViewFlowContext;
 import it.polimi.polishare.common.DHT.DHTException;
-import it.polimi.polishare.common.DHT.NoteMetaData;
+import it.polimi.polishare.common.NoteMetaData;
 import it.polimi.polishare.peer.App;
 import javafx.fxml.FXML;
 import javafx.stage.FileChooser;

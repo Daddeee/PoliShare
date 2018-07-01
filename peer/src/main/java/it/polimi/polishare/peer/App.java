@@ -8,7 +8,7 @@ import io.datafx.controller.flow.context.FXMLViewFlowContext;
 import io.datafx.controller.flow.context.ViewFlowContext;
 import it.polimi.polishare.common.DHT.DHT;
 import it.polimi.polishare.common.DHT.DHTException;
-import it.polimi.polishare.common.DHT.NoteMetaData;
+import it.polimi.polishare.common.NoteMetaData;
 import it.polimi.polishare.peer.controller.MainController;
 import it.polimi.polishare.peer.network.DHT.DHTImpl;
 import javafx.application.Application;

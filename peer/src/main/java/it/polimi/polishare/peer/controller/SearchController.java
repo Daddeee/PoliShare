@@ -6,7 +6,8 @@ import io.datafx.controller.ViewController;
 import io.datafx.controller.flow.context.FXMLViewFlowContext;
 import io.datafx.controller.flow.context.ViewFlowContext;
 import it.polimi.polishare.common.DHT.DHTException;
-import it.polimi.polishare.common.DHT.NoteMetaData;
+import it.polimi.polishare.common.NoteMetaData;
+import it.polimi.polishare.common.NoteMetaDataQueryGenerator;
 import it.polimi.polishare.peer.App;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -69,7 +70,16 @@ public class SearchController {
 
         List<NoteMetaData> notes = new ArrayList<>();
         try{
-            Predicate<NoteMetaData> queryPredicate = buildQueryPredicate();
+            NoteMetaDataQueryGenerator generator = new NoteMetaDataQueryGenerator();
+            Predicate<NoteMetaData> queryPredicate = generator.getPredicate(
+                    titleField.getText(),
+                    authorField.getText(),
+                    subjectField.getText(),
+                    teacherField.getText(),
+                    yearField.getText(),
+                    rating.getSelectionModel().getSelectedItem()
+            );
+
             notes = App.dht.query(queryPredicate);
         } catch (DHTException e) {
             //TODO popup errori
@@ -137,15 +147,6 @@ public class SearchController {
         ObservableList<Integer> ratingsValue = FXCollections.observableArrayList();
         ratingsValue.addAll(0, 1, 2, 3, 4, 5);
         rating.setItems(ratingsValue);
-    }
-
-    private Predicate<NoteMetaData> buildQueryPredicate(){
-        return note -> note.getTitle().toLowerCase().contains(titleField.getText().toLowerCase()) &&
-                note.getAuthor().toLowerCase().contains(authorField.getText().toLowerCase()) &&
-                note.getSubject().toLowerCase().contains(subjectField.getText().toLowerCase()) &&
-                note.getTeacher().toLowerCase().contains(teacherField.getText().toLowerCase()) &&
-                Integer.toString(note.getYear()).contains(yearField.getText().toLowerCase()) &&
-                note.averageRating() >= rating.getSelectionModel().getSelectedItem();
     }
 
     private void setupCatalogTableView() {
