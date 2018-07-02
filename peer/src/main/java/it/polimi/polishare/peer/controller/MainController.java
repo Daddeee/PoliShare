@@ -66,6 +66,7 @@ public class MainController {
         context.register("ContentFlow", innerFlow);
         drawer.setContent(flowHandler.start(new AnimatedFlowContainer(Duration.millis(320))));
         context.register("ContentPane", drawer.getContent().get(0));
+        context.register("Root", root);
 
         Flow sideMenuFlow = new Flow(SideMenuController.class);
         final FlowHandler sideMenuFlowHandler = sideMenuFlow.createHandler(context);

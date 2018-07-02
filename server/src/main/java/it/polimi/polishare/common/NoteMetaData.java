@@ -68,16 +68,25 @@ public class NoteMetaData implements Serializable {
         return reviewsMetaData;
     }
 
-    public void setReviewsMetaData(List<ReviewMetaData> reviewsMetaData) {
-        this.reviewsMetaData = reviewsMetaData;
+    public void addReviewMetaData(ReviewMetaData reviewMetaData) {
+        this.reviewsMetaData.remove(reviewMetaData);
+        this.reviewsMetaData.add(reviewMetaData);
+    }
+
+    public void removeReviewMetaData(ReviewMetaData reviewMetaData) {
+        this.reviewsMetaData.remove(reviewMetaData);
     }
 
     public List<Downloader> getOwners() {
         return owners;
     }
 
-    public void setOwners(List<Downloader> owners) {
-        this.owners = owners;
+    public void addOwner(Downloader owner) {
+        this.owners.add(owner);
+    }
+
+    public void removeOwner(Downloader owner) {
+        this.owners.remove(owner);
     }
 
     public double averageRating() {

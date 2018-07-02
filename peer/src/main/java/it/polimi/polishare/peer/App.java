@@ -27,7 +27,7 @@ import java.sql.SQLException;
 public class App  extends Application {
     public static DHT<NoteMetaData> dht;
     public static Downloader dw;
-    public static final String USERNAME = "User1";
+    public static final String USERNAME = "User2";
     private static final String MY_IP = "localhost";
     private static final String SERVER_IP = "localhost";
     private static final String SERVER_NAME = "_SERVER_";

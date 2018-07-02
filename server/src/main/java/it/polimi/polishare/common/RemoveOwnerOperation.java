@@ -1,10 +1,10 @@
-package it.polimi.polishare.peer.network;
+package it.polimi.polishare.common;
 
-import it.polimi.polishare.common.Downloader;
-import it.polimi.polishare.common.NoteMetaData;
 import it.polimi.polishare.common.chord.Operation;
 
-public class RemoveOwnerOperation implements Operation {
+import java.io.Serializable;
+
+public class RemoveOwnerOperation implements Operation, Serializable {
     private Downloader owner;
 
     public RemoveOwnerOperation(Downloader owner) {

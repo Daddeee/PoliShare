@@ -10,6 +10,7 @@ import it.polimi.polishare.common.NoteMetaData;
 import it.polimi.polishare.peer.App;
 import it.polimi.polishare.peer.model.Note;
 import it.polimi.polishare.peer.model.NoteDAO;
+import it.polimi.polishare.common.RemoveOwnerOperation;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -18,12 +19,15 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Bounds;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 
 import javax.annotation.PostConstruct;
-import java.util.HashMap;
+import java.io.IOException;
 import java.util.List;
 import java.util.function.Function;
 
@@ -55,12 +59,10 @@ public class CatalogController {
 
     private JFXPopup popup;
 
-    public HashMap<String, Note> notes = new HashMap<>();
-
     @PostConstruct
     public void init() {
         setupCatalogTableView();
-        //setupContextMenu();
+        setupContextMenu();
     }
 
     private void setupCatalogTableView() {
@@ -115,7 +117,7 @@ public class CatalogController {
             try {
                 NoteMetaData noteMetaData = App.dht.get(n.getTitle());
                 n.setNoteMetaData(noteMetaData);
-                notes.put(n.getTitle(), n);
+
                 data.add(new CatalogTreeTableNoteMetaData(n));
             } catch (DHTException e) {
                 e.printStackTrace();
@@ -124,33 +126,71 @@ public class CatalogController {
         return data;
     }
 
-    /*private void setupContextMenu() {
+    private void setupContextMenu() {
         catalogTreeTableView.setRowFactory(noteInfosTreeTableView -> {
-            final TreeTableRow<NoteInfos> row = new TreeTableRow<>();
+            final TreeTableRow<CatalogTreeTableNoteMetaData> row = new TreeTableRow<>();
             final ContextMenu contextMenu = new ContextMenu();
 
-            MenuItem inspect = new MenuItem("Recensioni");
-            inspect.setOnAction(e -> {
+            MenuItem reviews = new MenuItem("Visualizza Recensioni");
+            reviews.setOnAction(e -> {
+                double popupHeight = catalogTreeTableView.getHeight()*4/5;
+                double popupWidth = catalogTreeTableView.getWidth()*4/5;
+
                 try {
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/popup/Review.fxml"));
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/popup/Reviews.fxml"));
                     popup = new JFXPopup(loader.load());
-                    ((ReviewController) loader.getController()).initData(notes.get(row.getItem().title.get()), catalogTreeTableView.getHeight(), 2*catalogTreeTableView.getWidth()/3);
+
+                    ((ReviewsController) loader.getController()).initData(row.getTreeItem().getValue().getNote(), popupHeight, popupWidth);
                 } catch (IOException ioExc) {
                     ioExc.printStackTrace();
                 }
+                Parent root = (Parent) context.getRegisteredObject("Root");
+                Bounds rootBounds = root.getLayoutBounds();
 
-                popup.show(catalogTreeTableView);
+                popup.show(root, JFXPopup.PopupVPosition.TOP, JFXPopup.PopupHPosition.LEFT,
+                        (rootBounds.getWidth() - popupWidth) / 2,
+                        (rootBounds.getHeight() - popupHeight) / 2);
+            });
+
+            MenuItem addReview = new MenuItem("Visualizza Recensioni");
+            addReview.setOnAction(e -> {
+                double popupHeight = catalogTreeTableView.getHeight()*4/5;
+                double popupWidth = catalogTreeTableView.getWidth()*4/5;
+
+                try {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/popup/AddReview.fxml"));
+                    popup = new JFXPopup(loader.load());
+
+                    ((AddReviewController) loader.getController()).initData(row.getTreeItem().getValue().getNote(), popupHeight, popupWidth);
+                } catch (IOException ioExc) {
+                    ioExc.printStackTrace();
+                }
+                Parent root = (Parent) context.getRegisteredObject("Root");
+                Bounds rootBounds = root.getLayoutBounds();
+
+                popup.show(root, JFXPopup.PopupVPosition.TOP, JFXPopup.PopupHPosition.LEFT,
+                        (rootBounds.getWidth() - popupWidth) / 2,
+                        (rootBounds.getHeight() - popupHeight) / 2);
             });
 
             MenuItem delete = new MenuItem("Elimina");
-            delete.setOnAction(e -> {System.out.println("Del");});
+            delete.setOnAction(e -> {
+                try {
+                    App.dht.exec(row.getTreeItem().getValue().title.get(), new RemoveOwnerOperation(App.dw));
 
-            contextMenu.getItems().addAll(inspect, delete);
+                    NoteDAO noteDAO = new NoteDAO();
+                    noteDAO.delete(row.getTreeItem().getValue().title.get());
+                } catch (DHTException ex) {
+                    //TODO errori
+                }
+            });
+
+            contextMenu.getItems().addAll(reviews, addReview, delete);
 
             row.setContextMenu(contextMenu);
             return row;
         });
-    }*/
+    }
 
     private class CatalogTreeTableNoteMetaData extends RecursiveTreeObject<CatalogController.CatalogTreeTableNoteMetaData> {
         final StringProperty title;
