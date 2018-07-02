@@ -9,8 +9,11 @@ import it.polimi.polishare.common.UpdateReviewOperation;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
+
+import java.util.Arrays;
 
 public class AddReviewController {
     @FXML
@@ -25,12 +28,14 @@ public class AddReviewController {
     private Button newReviewTwoStar;
     @FXML
     private Button newReviewOneStar;
-
+    @FXML
+    private Label wordsCount;
     @FXML
     private TextArea newReviewBody;
 
     private Note note;
     private CatalogController catalogController;
+    private long count;
 
     private static ReviewMetaData newReview = null;
 
@@ -58,6 +63,9 @@ public class AddReviewController {
         newReviewBody.setWrapText(true);
         newReviewBody.setText(newReview.getBody());
 
+        count = Arrays.stream(newReview.getBody().split("[ \t\n]")).count();
+        wordsCount.setText(Long.toString(count));
+
         main.setPrefHeight(height);
         main.setMaxHeight(height);
         main.setMinHeight(height);
@@ -65,6 +73,8 @@ public class AddReviewController {
         main.setPrefWidth(width);
         main.setMaxWidth(width);
         main.setMinWidth(width);
+
+        initWordsCount();
     }
 
     @FXML
@@ -101,6 +111,9 @@ public class AddReviewController {
     public void save(ActionEvent e){
         newReview.setBody(newReviewBody.getText());
 
+        //TODO ERRORE
+        if(count > 500) return;
+
         try{
             App.dht.exec(note.getTitle(), new UpdateReviewOperation(newReview));
 
@@ -123,5 +136,12 @@ public class AddReviewController {
             if(i < rating) stars[i].styleProperty().setValue("-fx-background-color: #5264AE;");
             else stars[i].styleProperty().setValue("-fx-background-color: rgba(82, 100, 174, 0.4);");
         }
+    }
+
+    private void initWordsCount() {
+        newReviewBody.textProperty().addListener(((observableValue, oldValue, newValue) -> {
+            count = Arrays.stream(newValue.split("[ \t\n]")).count();
+            wordsCount.setText(Long.toString(count));
+        }));
     }
 }

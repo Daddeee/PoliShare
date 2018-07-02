@@ -24,6 +24,8 @@
         <Button styleClass="star-button" fx:id="newReviewFourStar" onAction="#setFourStar"/>
         <Button styleClass="star-button" fx:id="newReviewFiveStar" onAction="#setFiveStar"/>
         <Region HBox.hgrow="ALWAYS"/>
+        <Label text="Numero parole (max 500): "/>
+        <Label fx:id="wordsCount"/>
     </HBox>
     <TextArea fx:id="newReviewBody"/>
     <JFXButton buttonType="FLAT"  onAction="#save" style="-fx-text-fill: WHITE; -fx-background-color: rgb(102.0, 153.0, 102.0);-fx-font-size:14px;" text="Salva" />
