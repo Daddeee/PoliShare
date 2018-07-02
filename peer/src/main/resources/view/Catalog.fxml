@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXTextField?>
+<?import com.jfoenix.controls.JFXTreeTableColumn?>
+<?import com.jfoenix.controls.JFXTreeTableView?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<StackPane fx:id="root" xmlns="http://javafx.com/javafx/8.0.162-ea" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <VBox>
+            <HBox alignment="CENTER" fx:id="filterBox">
+                <Label styleClass="title-label">I Miei Appunti</Label>
+                <StackPane HBox.hgrow="ALWAYS">
+                    <StackPane maxWidth="200" StackPane.alignment="CENTER_RIGHT">
+                        <JFXTextField fx:id="searchField" promptText="Search..." />
+                    </StackPane>
+                </StackPane>
+            </HBox>
+
+            <JFXTreeTableView fx:id="catalogTreeTableView" VBox.vgrow="ALWAYS">
+                <columns>
+                    <JFXTreeTableColumn fx:id="titleColumn" text="Titolo" />
+                    <JFXTreeTableColumn fx:id="subjectColumn" text="Materia" />
+                    <JFXTreeTableColumn fx:id="authorColumn" text="Autore" />
+                    <JFXTreeTableColumn fx:id="teacherColumn" text="Docente" />
+                    <JFXTreeTableColumn fx:id="yearColumn" text="Anno" />
+                </columns>
+            </JFXTreeTableView>
+         <StackPane.margin>
+            <Insets left="40.0" right="40.0" bottom="40"/>
+         </StackPane.margin>
+        </VBox>
+    </children>
+</StackPane>

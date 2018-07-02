@@ -8,9 +8,12 @@ import io.datafx.controller.flow.context.FXMLViewFlowContext;
 import io.datafx.controller.flow.context.ViewFlowContext;
 import it.polimi.polishare.common.DHT.DHT;
 import it.polimi.polishare.common.DHT.DHTException;
+import it.polimi.polishare.common.Downloader;
 import it.polimi.polishare.common.NoteMetaData;
 import it.polimi.polishare.peer.controller.MainController;
 import it.polimi.polishare.peer.network.DHT.DHTImpl;
+import it.polimi.polishare.peer.network.DownloaderImpl;
+import it.polimi.polishare.peer.utils.DB;
 import javafx.application.Application;
 import javafx.collections.ObservableList;
 import javafx.geometry.Rectangle2D;
@@ -18,8 +21,12 @@ import javafx.scene.Scene;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
+import java.rmi.RemoteException;
+import java.sql.SQLException;
+
 public class App  extends Application {
     public static DHT<NoteMetaData> dht;
+    public static Downloader dw;
     public static final String USERNAME = "User1";
     private static final String MY_IP = "localhost";
     private static final String SERVER_IP = "localhost";
@@ -32,9 +39,13 @@ public class App  extends Application {
         System.setProperty("java.rmi.server.hostname", MY_IP);
 
         try {
+            DB.setUp();
+
             dht = new DHTImpl<>(USERNAME, NoteMetaData.class);
             dht.join(SERVER_IP, SERVER_NAME);
-        } catch (DHTException e) {
+
+            dw = new DownloaderImpl();
+        } catch (DHTException | SQLException | RemoteException e) {
             e.printStackTrace();
             System.exit(1);
         }

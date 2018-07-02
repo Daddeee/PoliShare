@@ -54,7 +54,7 @@ public class SideMenuController {
             }).start();
         });
         Flow contentFlow = (Flow) context.getRegisteredObject("ContentFlow");
-        //bindNodeToController(catalog, CatalogController.class, contentFlow);
+        bindNodeToController(catalog, CatalogController.class, contentFlow);
         bindNodeToController(publish, PublishController.class, contentFlow);
         bindNodeToController(search, SearchController.class, contentFlow);
     }

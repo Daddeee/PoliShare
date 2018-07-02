@@ -6,9 +6,14 @@ import io.datafx.controller.ViewController;
 import io.datafx.controller.flow.context.FXMLViewFlowContext;
 import io.datafx.controller.flow.context.ViewFlowContext;
 import it.polimi.polishare.common.DHT.DHTException;
+import it.polimi.polishare.common.Downloader;
 import it.polimi.polishare.common.NoteMetaData;
 import it.polimi.polishare.common.NoteMetaDataQueryGenerator;
 import it.polimi.polishare.peer.App;
+import it.polimi.polishare.peer.model.Note;
+import it.polimi.polishare.peer.model.NoteDAO;
+import it.polimi.polishare.peer.network.AddOwnerOperation;
+import it.polimi.polishare.peer.utils.exceptions.AddFailedException;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -22,6 +27,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 
 import javax.annotation.PostConstruct;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -47,21 +56,21 @@ public class SearchController {
     @FXML
     private JFXTextField yearField;
     @FXML
-    private JFXTreeTableView<TreeTableNoteMetaData> catalogTreeTableView;
+    private JFXTreeTableView<SearchTreeTableNoteMetaData> catalogTreeTableView;
     @FXML
-    private JFXTreeTableColumn<TreeTableNoteMetaData, String> titleColumn;
+    private JFXTreeTableColumn<SearchTreeTableNoteMetaData, String> titleColumn;
     @FXML
-    private JFXTreeTableColumn<TreeTableNoteMetaData, String> subjectColumn;
+    private JFXTreeTableColumn<SearchTreeTableNoteMetaData, String> subjectColumn;
     @FXML
-    private JFXTreeTableColumn<TreeTableNoteMetaData, String> authorColumn;
+    private JFXTreeTableColumn<SearchTreeTableNoteMetaData, String> authorColumn;
     @FXML
-    private JFXTreeTableColumn<TreeTableNoteMetaData, String> teacherColumn;
+    private JFXTreeTableColumn<SearchTreeTableNoteMetaData, String> teacherColumn;
     @FXML
-    private JFXTreeTableColumn<TreeTableNoteMetaData, Integer> yearColumn;
+    private JFXTreeTableColumn<SearchTreeTableNoteMetaData, Integer> yearColumn;
     @FXML
     private HBox filterBox;
 
-    public ObservableList<TreeTableNoteMetaData> data = FXCollections.observableArrayList();
+    public ObservableList<SearchTreeTableNoteMetaData> data = FXCollections.observableArrayList();
 
     @FXML
     public void query() {
@@ -101,41 +110,37 @@ public class SearchController {
     @FXML
     public void download() {
         if(catalogTreeTableView.getSelectionModel().getSelectedItem() == null) return;
-
-        /*NoteInfos info = catalogTreeTableView.getSelectionModel().getSelectedItem().getValue();
-        Note note = ActiveQuery.getInstance().getResult(info.title.get());
-
-        List<String> possessorIps = ActiveQuery.getInstance().getIps(note);
-        List<String> possessorUsernames = ActiveQuery.getInstance().getUsernames(note);
-
+        NoteDAO noteDAO = new NoteDAO();
+        NoteMetaData info = catalogTreeTableView.getSelectionModel().getSelectedItem().getValue().getNoteMetaData();
         byte[] fileBytes = null;
-        String path = "shared/" + note.getTitle() + ".pdf";
 
-        try{
-            NoteDAO noteDAO = new NoteDAO();
-            noteDAO.create(note);
-            noteDAO.setPath(note.getTitle(), path);
-        } catch (AddFailedException | UpdateFailedException e){
-            e.printStackTrace();
-            return;
-        }
+        //TODO hai già il file !! (Error display)
+        Note n = noteDAO.read(info.getTitle());
+        if(n != null) return;
 
-        for(int i = 0; i < possessorIps.size(); i++){
+
+        //TODO selectable destination path
+        String path = "shared/" + info.getTitle() + ".pdf";
+
+        Note newNote = new Note(info.getTitle(), path);
+        for(Downloader d : info.getOwners()){
             try{
-                Registry registry = LocateRegistry.getRegistry(possessorIps.get(i), App.CLIENT_PORT);
-                Peer peer = (Peer) registry.lookup(possessorUsernames.get(i));
-                fileBytes = peer.download(note.getTitle());
+                d.ping();
+                fileBytes = d.download(info.getTitle());
 
                 File file = new File(path);
                 BufferedOutputStream output = new BufferedOutputStream(new FileOutputStream(file.getName()));
                 output.write(fileBytes,0,fileBytes.length);
                 output.flush();
                 output.close();
+
+                App.dht.exec(info.getTitle(), new AddOwnerOperation(App.dw));
+                noteDAO.create(newNote);
                 break;
-            } catch (IOException | NotBoundException e){
+            } catch (IOException | AddFailedException | DHTException e){
                 e.printStackTrace();
             }
-        }*/
+        }
 
     }
 
@@ -149,10 +154,10 @@ public class SearchController {
     }
 
     private void setupCatalogTableView() {
-        setupCellValueFactory(titleColumn, TreeTableNoteMetaData::titleProperty);
-        setupCellValueFactory(authorColumn, TreeTableNoteMetaData::authorProperty);
-        setupCellValueFactory(subjectColumn, TreeTableNoteMetaData::subjectProperty);
-        setupCellValueFactory(teacherColumn, TreeTableNoteMetaData::teacherProperty);
+        setupCellValueFactory(titleColumn, SearchTreeTableNoteMetaData::titleProperty);
+        setupCellValueFactory(authorColumn, SearchTreeTableNoteMetaData::authorProperty);
+        setupCellValueFactory(subjectColumn, SearchTreeTableNoteMetaData::subjectProperty);
+        setupCellValueFactory(teacherColumn, SearchTreeTableNoteMetaData::teacherProperty);
         setupCellValueFactory(yearColumn, p -> p.year.asObject());
 
         catalogTreeTableView.setColumnResizePolicy(TreeTableView.CONSTRAINED_RESIZE_POLICY);
@@ -166,8 +171,8 @@ public class SearchController {
         catalogTreeTableView.setShowRoot(false);
     }
 
-    private <T> void setupCellValueFactory(JFXTreeTableColumn<TreeTableNoteMetaData, T> column, Function<TreeTableNoteMetaData, ObservableValue<T>> mapper) {
-        column.setCellValueFactory((TreeTableColumn.CellDataFeatures<TreeTableNoteMetaData, T> param) -> {
+    private <T> void setupCellValueFactory(JFXTreeTableColumn<SearchTreeTableNoteMetaData, T> column, Function<SearchTreeTableNoteMetaData, ObservableValue<T>> mapper) {
+        column.setCellValueFactory((TreeTableColumn.CellDataFeatures<SearchTreeTableNoteMetaData, T> param) -> {
             if (column.validateValue(param)) {
                 return mapper.apply(param.getValue().getValue());
             } else {
@@ -180,10 +185,10 @@ public class SearchController {
         data.clear();
 
         for(NoteMetaData n : notes)
-            data.add(new TreeTableNoteMetaData(n));
+            data.add(new SearchTreeTableNoteMetaData(n));
     }
 
-    private class TreeTableNoteMetaData extends RecursiveTreeObject<TreeTableNoteMetaData> {
+    private class SearchTreeTableNoteMetaData extends RecursiveTreeObject<SearchTreeTableNoteMetaData> {
         final StringProperty title;
         final StringProperty subject;
         final StringProperty author;
@@ -191,7 +196,7 @@ public class SearchController {
         final SimpleIntegerProperty year;
         final NoteMetaData noteMetaData;
 
-        TreeTableNoteMetaData(NoteMetaData noteMetaData) {
+        SearchTreeTableNoteMetaData(NoteMetaData noteMetaData) {
             this.title = new SimpleStringProperty(noteMetaData.getTitle());
             this.subject = new SimpleStringProperty(noteMetaData.getSubject());
             this.author = new SimpleStringProperty(noteMetaData.getAuthor());

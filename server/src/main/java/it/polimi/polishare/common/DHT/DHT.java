@@ -1,5 +1,7 @@
 package it.polimi.polishare.common.DHT;
 
+import it.polimi.polishare.common.chord.Operation;
+
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -17,4 +19,6 @@ public interface DHT<T> {
     void remove(String key) throws DHTException;
 
     List<T> query(Predicate<T> predicate) throws DHTException;
+
+    void exec(String key, Operation op) throws DHTException;
 }

@@ -4,9 +4,9 @@ import it.polimi.polishare.common.DHT.DHT;
 import it.polimi.polishare.common.DHT.DHTException;
 import it.polimi.polishare.common.chord.Key;
 import it.polimi.polishare.common.chord.Node;
+import it.polimi.polishare.common.chord.Operation;
 import it.polimi.polishare.peer.network.chord.NodeImpl;
 
-import java.io.Serializable;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -83,6 +83,16 @@ public class DHTImpl<T> implements DHT<T> {
             node.repliedRemove(k);
         } catch (Exception e) {
             throw new DHTException("Cannot remove the given key: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public void exec(String key, Operation op) throws DHTException {
+        try{
+            Key k = new Key(key);
+            node.exec(k, op);
+        } catch (Exception e) {
+            throw new DHTException("Cannot execute the given operation: " + e.getMessage());
         }
     }
 

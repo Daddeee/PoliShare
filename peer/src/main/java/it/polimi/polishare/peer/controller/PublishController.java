@@ -5,14 +5,19 @@ import io.datafx.controller.ViewController;
 import io.datafx.controller.flow.context.FXMLViewFlowContext;
 import io.datafx.controller.flow.context.ViewFlowContext;
 import it.polimi.polishare.common.DHT.DHTException;
+import it.polimi.polishare.common.Downloader;
 import it.polimi.polishare.common.NoteMetaData;
 import it.polimi.polishare.peer.App;
+import it.polimi.polishare.peer.model.Note;
+import it.polimi.polishare.peer.model.NoteDAO;
+import it.polimi.polishare.peer.utils.exceptions.AddFailedException;
 import javafx.fxml.FXML;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
+import java.util.ArrayList;
 
 @ViewController(value = "/view/Publish.fxml")
 public class PublishController {
@@ -66,11 +71,11 @@ public class PublishController {
             }
         });
 
-        /*path.focusedProperty().addListener((o, oldVal, newVal) -> {
+        path.focusedProperty().addListener((o, oldVal, newVal) -> {
             if (!newVal) {
                 path.validate();
             }
-        });*/
+        });
     }
 
     @FXML
@@ -88,17 +93,24 @@ public class PublishController {
         if(!(title.validate() && author.validate() && subject.validate() && teacher.validate() && year.validate() /*&& path.validate()*/))
             return;
 
-        NoteMetaData newNote = new NoteMetaData(title.getText(), author.getText(), subject.getText(), teacher.getText(), Integer.parseInt(year.getText()));
+        NoteDAO noteDAO = new NoteDAO();
+
+        NoteMetaData newNoteMetaData = new NoteMetaData(title.getText(), author.getText(), subject.getText(), teacher.getText(), Integer.parseInt(year.getText()));
+        newNoteMetaData.addOwner(App.dw);
+        Note newNote = new Note(title.getText(), path.getText());
+        newNote.setNoteMetaData(newNoteMetaData);
 
         try {
-            App.dht.put(newNote.getTitle(), newNote);
+            App.dht.put(newNoteMetaData.getTitle(), newNoteMetaData);
+            noteDAO.create(newNote);
+
             title.clear();
             author.clear();
             subject.clear();
             teacher.clear();
             year.clear();
             path.clear();
-        } catch (DHTException e) {
+        } catch (DHTException | AddFailedException e) {
             e.printStackTrace();
 
         }

@@ -2,6 +2,7 @@ package it.polimi.polishare.server.network.chord;
 
 import it.polimi.polishare.common.chord.Key;
 import it.polimi.polishare.common.chord.Node;
+import it.polimi.polishare.common.chord.Operation;
 
 import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
@@ -52,6 +53,11 @@ public class NodeImpl extends UnicastRemoteObject implements Node {
     @Override
     public void repliedRemove(Key k) throws RemoteException {
         lookupSuccessor(k).repliedRemove(k);
+    }
+
+    @Override
+    public void exec(Key k, Operation op) throws RemoteException {
+        lookupSuccessor(k).execStored(k, op);
     }
 
     @Override
@@ -128,6 +134,11 @@ public class NodeImpl extends UnicastRemoteObject implements Node {
     @Override
     public void removeStored(Key k) {
         storage.remove(k);
+    }
+
+    @Override
+    public void execStored(Key k, Operation op) {
+        op.execute(storage.get(k));
     }
 
     @Override
