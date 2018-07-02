@@ -1,6 +1,7 @@
 package it.polimi.polishare.peer.controller;
 
 import it.polimi.polishare.common.DHT.DHTException;
+import it.polimi.polishare.common.NoteMetaData;
 import it.polimi.polishare.common.ReviewMetaData;
 import it.polimi.polishare.peer.App;
 import it.polimi.polishare.peer.model.Note;
@@ -29,10 +30,13 @@ public class AddReviewController {
     private TextArea newReviewBody;
 
     private Note note;
+    private CatalogController catalogController;
+
     private static ReviewMetaData newReview = null;
 
-    public void initData(Note note, double height, double width){
+    public void initData(CatalogController catalogController, Note note, double height, double width){
         this.note = note;
+        this.catalogController = catalogController;
 
         if(newReview == null || !newReview.getNoteMetaData().equals(note.getNoteMetaData())) {
             ReviewMetaData myReview = null;
@@ -99,6 +103,9 @@ public class AddReviewController {
 
         try{
             App.dht.exec(note.getTitle(), new UpdateReviewOperation(newReview));
+
+            NoteMetaData noteMetaData = App.dht.get(note.getTitle());
+            catalogController.updateData(noteMetaData);
         } catch (DHTException ex){
             //TODO GESTIONE ERRORI
             ex.printStackTrace();

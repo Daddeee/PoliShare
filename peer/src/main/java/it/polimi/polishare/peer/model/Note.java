@@ -28,4 +28,11 @@ public class Note {
     public void setNoteMetaData(NoteMetaData noteMetaData) {
         this.noteMetaData = noteMetaData;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if(o == this) return true;
+        if(!(o instanceof Note)) return false;
+        return ((Note) o).title.equals(title);
+    }
 }

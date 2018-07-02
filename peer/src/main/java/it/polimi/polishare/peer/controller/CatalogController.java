@@ -58,11 +58,24 @@ public class CatalogController {
     private JFXButton closeButton;
 
     private JFXPopup popup;
+    private ObservableList<CatalogTreeTableNoteMetaData> data;
 
     @PostConstruct
     public void init() {
         setupCatalogTableView();
         setupContextMenu();
+    }
+
+    public void updateData(NoteMetaData noteMetaData) {
+        CatalogTreeTableNoteMetaData toUpdate = null;
+        for (CatalogTreeTableNoteMetaData c : data) {
+            if (c.title.get().equals(noteMetaData.getTitle())) {
+                toUpdate = c;
+                break;
+            }
+        }
+
+        if(toUpdate != null) toUpdate.getNote().setNoteMetaData(noteMetaData);
     }
 
     private void setupCatalogTableView() {
@@ -79,7 +92,7 @@ public class CatalogController {
         teacherColumn.prefWidthProperty().bind(catalogTreeTableView.widthProperty().divide(catalogTreeTableView.getColumns().size()));
         yearColumn.prefWidthProperty().bind(catalogTreeTableView.widthProperty().divide(catalogTreeTableView.getColumns().size()));
 
-        ObservableList<CatalogTreeTableNoteMetaData> data = getTableData();
+        data = getTableData();
         catalogTreeTableView.setRoot(new RecursiveTreeItem<>(data, RecursiveTreeObject::getChildren));
 
         catalogTreeTableView.setShowRoot(false);
@@ -152,7 +165,7 @@ public class CatalogController {
                         (rootBounds.getHeight() - popupHeight) / 2);
             });
 
-            MenuItem addReview = new MenuItem("Visualizza Recensioni");
+            MenuItem addReview = new MenuItem("Aggiungi Recensione");
             addReview.setOnAction(e -> {
                 double popupHeight = catalogTreeTableView.getHeight()*4/5;
                 double popupWidth = catalogTreeTableView.getWidth()*4/5;
@@ -161,7 +174,7 @@ public class CatalogController {
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/popup/AddReview.fxml"));
                     popup = new JFXPopup(loader.load());
 
-                    ((AddReviewController) loader.getController()).initData(row.getTreeItem().getValue().getNote(), popupHeight, popupWidth);
+                    ((AddReviewController) loader.getController()).initData(this, row.getTreeItem().getValue().getNote(), popupHeight, popupWidth);
                 } catch (IOException ioExc) {
                     ioExc.printStackTrace();
                 }
@@ -229,5 +242,7 @@ public class CatalogController {
         Note getNote() {
             return note;
         }
+
+
     }
 }
