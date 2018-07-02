@@ -5,6 +5,7 @@ import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 import io.datafx.controller.ViewController;
 import io.datafx.controller.flow.context.FXMLViewFlowContext;
 import io.datafx.controller.flow.context.ViewFlowContext;
+import it.polimi.polishare.common.DHT.DHT;
 import it.polimi.polishare.common.DHT.DHTException;
 import it.polimi.polishare.common.Downloader;
 import it.polimi.polishare.common.NoteMetaData;
@@ -13,6 +14,7 @@ import it.polimi.polishare.peer.App;
 import it.polimi.polishare.peer.model.Note;
 import it.polimi.polishare.peer.model.NoteDAO;
 import it.polimi.polishare.peer.network.AddOwnerOperation;
+import it.polimi.polishare.peer.network.RemoveOwnerOperation;
 import it.polimi.polishare.peer.utils.exceptions.AddFailedException;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -31,6 +33,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -137,6 +140,10 @@ public class SearchController {
                 App.dht.exec(info.getTitle(), new AddOwnerOperation(App.dw));
                 noteDAO.create(newNote);
                 break;
+            } catch (RemoteException e) {
+                try {
+                    App.dht.exec(info.getTitle(), new RemoveOwnerOperation(App.dw));
+                } catch (DHTException ex) {}
             } catch (IOException | AddFailedException | DHTException e){
                 e.printStackTrace();
             }
