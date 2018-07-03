@@ -15,7 +15,9 @@ import it.polimi.polishare.common.unauthenticated.LoginFailedException;
 import it.polimi.polishare.peer.App;
 import it.polimi.polishare.peer.model.User;
 import it.polimi.polishare.peer.network.DHT.DHTImpl;
+import it.polimi.polishare.peer.utils.Notifications;
 import javafx.fxml.FXML;
+import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 
 import javax.annotation.PostConstruct;
@@ -62,8 +64,8 @@ public class LoginController {
 
             switchToAuthenticatedUI();
         } catch (LoginFailedException e) {
-            //TODO ERRORE
-            e.printStackTrace();
+            StackPane root = (StackPane) context.getRegisteredObject("Root");
+            Notifications.exception(root, e);
         } catch (RemoteException | DHTException | FlowException e) {
             e.printStackTrace();
         }
