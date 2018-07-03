@@ -4,6 +4,7 @@ import it.polimi.polishare.common.Downloader;
 import it.polimi.polishare.peer.App;
 import it.polimi.polishare.peer.model.Note;
 import it.polimi.polishare.peer.model.NoteDAO;
+import it.polimi.polishare.peer.model.User;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -51,6 +52,6 @@ public class DownloaderImpl extends UnicastRemoteObject implements Downloader {
         } catch (Exception e) {
             registry = LocateRegistry.getRegistry(RMI_DEFAULT_PORT);
         }
-        registry.rebind("downloader_" + App.USERNAME, this);
+        registry.rebind("downloader_" + User.getInstance().getUsername(), this);
     }
 }

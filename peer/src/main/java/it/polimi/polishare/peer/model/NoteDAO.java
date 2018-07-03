@@ -1,8 +1,8 @@
 package it.polimi.polishare.peer.model;
 
 import it.polimi.polishare.peer.utils.DB;
-import it.polimi.polishare.peer.utils.exceptions.AddFailedException;
-import it.polimi.polishare.peer.utils.exceptions.UpdateFailedException;
+import it.polimi.polishare.common.AddFailedException;
+import it.polimi.polishare.common.UpdateFailedException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -23,7 +23,7 @@ public class NoteDAO {
             PreparedStatement getNotes = c.prepareStatement("SELECT * FROM notes");
 
             ResultSet rsNotes = getNotes.executeQuery();
-            if (rsNotes.next()) notes.add(new Note(rsNotes.getString("title"), rsNotes.getString("path")));
+            while (rsNotes.next()) notes.add(new Note(rsNotes.getString("title"), rsNotes.getString("path")));
 
             getNotes.close();
             rsNotes.close();

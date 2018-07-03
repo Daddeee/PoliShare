@@ -5,16 +5,8 @@ import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 import io.datafx.controller.ViewController;
 import io.datafx.controller.flow.context.FXMLViewFlowContext;
 import io.datafx.controller.flow.context.ViewFlowContext;
-import it.polimi.polishare.common.DHT.DHTException;
-import it.polimi.polishare.common.Downloader;
-import it.polimi.polishare.common.NoteMetaData;
-import it.polimi.polishare.common.NoteMetaDataQueryGenerator;
+import it.polimi.polishare.common.*;
 import it.polimi.polishare.peer.App;
-import it.polimi.polishare.peer.model.Note;
-import it.polimi.polishare.peer.model.NoteDAO;
-import it.polimi.polishare.common.AddOwnerOperation;
-import it.polimi.polishare.common.RemoveOwnerOperation;
-import it.polimi.polishare.common.AddFailedException;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -28,10 +20,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 
 import javax.annotation.PostConstruct;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +27,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 @ViewController(value = "/view/Search.fxml", title = "Polishare")
-public class SearchController {
+public class UnauthenticatedSearchController {
     @FXMLViewFlowContext
     private ViewFlowContext context;
 
@@ -71,6 +59,9 @@ public class SearchController {
     private JFXTreeTableColumn<SearchTreeTableNoteMetaData, Integer> yearColumn;
     @FXML
     private HBox filterBox;
+    @FXML
+    private JFXButton downloadButton;
+
 
     public ObservableList<SearchTreeTableNoteMetaData> data = FXCollections.observableArrayList();
 
@@ -91,8 +82,8 @@ public class SearchController {
                     rating.getSelectionModel().getSelectedItem()
             );
 
-            notes = App.dht.query(queryPredicate);
-        } catch (DHTException e) {
+            notes = App.us.query(queryPredicate);
+        } catch (RemoteException e) {
             e.printStackTrace();
         }
 
@@ -110,48 +101,11 @@ public class SearchController {
     }
 
     @FXML
-    public void download() {
-        if(catalogTreeTableView.getSelectionModel().getSelectedItem() == null) return;
-        NoteDAO noteDAO = new NoteDAO();
-        NoteMetaData info = catalogTreeTableView.getSelectionModel().getSelectedItem().getValue().getNoteMetaData();
-        byte[] fileBytes = null;
-
-        //TODO hai già il file !! (Error display)
-        Note n = noteDAO.read(info.getTitle());
-        if(n != null) return;
-
-
-        //TODO selectable destination path
-        String path = "shared/" + info.getTitle() + ".pdf";
-
-        Note newNote = new Note(info.getTitle(), path);
-        for(Downloader d : info.getOwners()){
-            try{
-                d.ping();
-                fileBytes = d.download(info.getTitle());
-
-                File file = new File(path);
-                BufferedOutputStream output = new BufferedOutputStream(new FileOutputStream(file.getName()));
-                output.write(fileBytes,0,fileBytes.length);
-                output.flush();
-                output.close();
-
-                App.dht.exec(info.getTitle(), new AddOwnerOperation(App.dw));
-                noteDAO.create(newNote);
-                break;
-            } catch (RemoteException e) {
-                try {
-                    App.dht.exec(info.getTitle(), new RemoveOwnerOperation(App.dw));
-                } catch (DHTException ex) {}
-            } catch (IOException | AddFailedException | DHTException e){
-                e.printStackTrace();
-            }
-        }
-
-    }
+    public void download() {}
 
     @PostConstruct
     public void init() {
+        downloadButton.setVisible(false);
         setupCatalogTableView();
 
         ObservableList<Integer> ratingsValue = FXCollections.observableArrayList();

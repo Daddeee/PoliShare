@@ -42,7 +42,7 @@
         </HBox>
         <HBox spacing="20.0" alignment="CENTER">
             <JFXButton buttonType="FLAT" onAction="#query" style="-fx-text-fill: WHITE; -fx-background-color: rgb(102.0, 153.0, 102.0);-fx-font-size:14px;" text="Cerca" />
-            <JFXButton buttonType="FLAT" onAction="#download" style="-fx-text-fill: WHITE; -fx-background-color: rgb(102.0, 153.0, 102.0);-fx-font-size:14px;" text="Scarica" />
+            <JFXButton buttonType="FLAT" onAction="#download" style="-fx-text-fill: WHITE; -fx-background-color: rgb(102.0, 153.0, 102.0);-fx-font-size:14px;" text="Scarica" fx:id="downloadButton" />
             <JFXButton buttonType="FLAT" onAction="#clear" style="-fx-text-fill: WHITE; -fx-background-color: rgb(102.0, 153.0, 102.0);-fx-font-size:14px;" text="Cancella" />
         </HBox>
         <JFXTreeTableView fx:id="catalogTreeTableView" VBox.vgrow="ALWAYS">

@@ -5,19 +5,17 @@ import io.datafx.controller.ViewController;
 import io.datafx.controller.flow.context.FXMLViewFlowContext;
 import io.datafx.controller.flow.context.ViewFlowContext;
 import it.polimi.polishare.common.DHT.DHTException;
-import it.polimi.polishare.common.Downloader;
 import it.polimi.polishare.common.NoteMetaData;
 import it.polimi.polishare.peer.App;
 import it.polimi.polishare.peer.model.Note;
 import it.polimi.polishare.peer.model.NoteDAO;
-import it.polimi.polishare.peer.utils.exceptions.AddFailedException;
+import it.polimi.polishare.common.AddFailedException;
 import javafx.fxml.FXML;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
-import java.util.ArrayList;
 
 @ViewController(value = "/view/Publish.fxml")
 public class PublishController {
@@ -90,7 +88,7 @@ public class PublishController {
 
     @FXML
     private void save() {
-        if(!(title.validate() && author.validate() && subject.validate() && teacher.validate() && year.validate() /*&& path.validate()*/))
+        if(!(title.validate() && author.validate() && subject.validate() && teacher.validate() && year.validate() && path.validate()))
             return;
 
         NoteDAO noteDAO = new NoteDAO();

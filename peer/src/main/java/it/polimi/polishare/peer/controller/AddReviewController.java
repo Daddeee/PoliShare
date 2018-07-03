@@ -6,6 +6,7 @@ import it.polimi.polishare.common.ReviewMetaData;
 import it.polimi.polishare.peer.App;
 import it.polimi.polishare.peer.model.Note;
 import it.polimi.polishare.common.UpdateReviewOperation;
+import it.polimi.polishare.peer.model.User;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -47,7 +48,7 @@ public class AddReviewController {
             ReviewMetaData myReview = null;
 
             for (ReviewMetaData r : note.getNoteMetaData().getReviewsMetaData()) {
-                if (r.getAuthor().equals(App.USERNAME)) {
+                if (r.getAuthor().equals(User.getInstance().getUsername())) {
                     myReview = r;
                     break;
                 }
@@ -56,7 +57,7 @@ public class AddReviewController {
             if(myReview != null)
                 newReview = myReview;
             else
-                newReview = new ReviewMetaData(note.getNoteMetaData(), App.USERNAME, "", 0);
+                newReview = new ReviewMetaData(note.getNoteMetaData(), User.getInstance().getUsername(), "", 0);
         }
 
         initNewReviewRating();

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import com.jfoenix.controls.JFXTextField?>
+<?import com.jfoenix.validation.RequiredFieldValidator?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import com.jfoenix.controls.JFXButton?>
+<StackPane fx:id="root" xmlns="http://javafx.com/javafx/8.0.162-ea" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <VBox prefWidth="300" spacing="40" maxWidth="400" alignment="CENTER">
+            <children>
+                <HBox prefHeight="20" maxWidth="300">
+                    <JFXTextField fx:id="email" promptText="email" prefHeight="20">
+                        <validators>
+                            <RequiredFieldValidator message="Campo richiesto!">
+                                <FontAwesomeIconView glyphName="WARNING" style="-fx-font-family: FontAwesome;"/>
+                            </RequiredFieldValidator>
+                        </validators>
+                    </JFXTextField>
+                </HBox>
+                <HBox prefHeight="20" maxWidth="300">
+                    <JFXTextField fx:id="username" promptText="Nome utente" prefHeight="20">
+                        <validators>
+                            <RequiredFieldValidator message="Campo richiesto!">
+                                <FontAwesomeIconView glyphName="WARNING" style="-fx-font-family: FontAwesome;"/>
+                            </RequiredFieldValidator>
+                        </validators>
+                    </JFXTextField>
+                </HBox>
+                <JFXButton onAction="#register" prefWidth="100" prefHeight="40" buttonType="FLAT" text="Registrati"
+                           style="-fx-text-fill: WHITE; -fx-background-color: rgb(102.0, 153.0, 102.0);-fx-font-size:14px;"/>
+            </children>
+        </VBox>
+    </children>
+</StackPane>

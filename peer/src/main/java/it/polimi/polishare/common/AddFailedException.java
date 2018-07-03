@@ -1,4 +1,4 @@
-package it.polimi.polishare.peer.utils.exceptions;
+package it.polimi.polishare.common;
 
 public class AddFailedException extends Exception {
     public AddFailedException() { super(); }

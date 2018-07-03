@@ -60,15 +60,17 @@ public class MainController {
         });
 
         context = new ViewFlowContext();
-        Flow innerFlow = new Flow(SearchController.class);
+        Flow innerFlow = new Flow(UnauthenticatedSearchController.class);
         final FlowHandler flowHandler = innerFlow.createHandler(context);
+        drawer.setContent(flowHandler.start(new AnimatedFlowContainer(Duration.millis(320))));
+
         context.register("ContentFlowHandler", flowHandler);
         context.register("ContentFlow", innerFlow);
-        drawer.setContent(flowHandler.start(new AnimatedFlowContainer(Duration.millis(320))));
         context.register("ContentPane", drawer.getContent().get(0));
         context.register("Root", root);
+        context.register("Drawer", drawer);
 
-        Flow sideMenuFlow = new Flow(SideMenuController.class);
+        Flow sideMenuFlow = new Flow(UnauthenticatedSideMenuController.class);
         final FlowHandler sideMenuFlowHandler = sideMenuFlow.createHandler(context);
         drawer.setSidePane(sideMenuFlowHandler.start(new AnimatedFlowContainer(Duration.millis(320))));
     }

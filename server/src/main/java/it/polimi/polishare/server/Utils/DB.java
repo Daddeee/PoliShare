@@ -1,6 +1,4 @@
-package it.polimi.polishare.peer.utils;
-
-import it.polimi.polishare.peer.App;
+package it.polimi.polishare.server.Utils;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -8,12 +6,14 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class DB {
-    private static String dbName =  "my.db";
+    private static String dbName = "server.db";
 
     public static void setUp() throws SQLException {
-        String createNotesTable = "CREATE TABLE IF NOT EXISTS notes (" +
-                "title      VARCHAR(40) PRIMARY KEY NOT NULL," +
-                "path       TEXT" +
+        String createNotesTable =
+                "CREATE TABLE IF NOT EXISTS users (" +
+                "username      VARCHAR(40) PRIMARY KEY NOT NULL," +
+                "password      VARCHAR(40) NOT NULL," +
+                "mail          VARCHAR(40) UNIQUE NOT NULL" +
                 ");";
 
         Connection c = getConnection();
@@ -40,3 +40,4 @@ public class DB {
         c.close();
     }
 }
+

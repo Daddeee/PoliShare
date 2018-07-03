@@ -10,6 +10,8 @@ import it.polimi.polishare.common.DHT.DHT;
 import it.polimi.polishare.common.DHT.DHTException;
 import it.polimi.polishare.common.Downloader;
 import it.polimi.polishare.common.NoteMetaData;
+import it.polimi.polishare.common.unauthenticated.UnauthenticatedSession;
+import it.polimi.polishare.common.unauthenticated.UnauthenticatedSessionFactory;
 import it.polimi.polishare.peer.controller.MainController;
 import it.polimi.polishare.peer.network.DHT.DHTImpl;
 import it.polimi.polishare.peer.network.DownloaderImpl;
@@ -21,16 +23,18 @@ import javafx.scene.Scene;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.sql.SQLException;
 
 public class App  extends Application {
     public static DHT<NoteMetaData> dht;
+    public static UnauthenticatedSession us;
     public static Downloader dw;
-    public static final String USERNAME = "User2";
+    public static final String SERVER_IP = "localhost";
     private static final String MY_IP = "localhost";
-    private static final String SERVER_IP = "localhost";
-    private static final String SERVER_NAME = "_SERVER_";
 
     @FXMLViewFlowContext
     private ViewFlowContext flowContext;
@@ -40,12 +44,12 @@ public class App  extends Application {
 
         try {
             DB.setUp();
-
-            dht = new DHTImpl<>(USERNAME, NoteMetaData.class);
-            dht.join(SERVER_IP, SERVER_NAME);
-
             dw = new DownloaderImpl();
-        } catch (DHTException | SQLException | RemoteException e) {
+
+            Registry registry = LocateRegistry.getRegistry(SERVER_IP);
+            UnauthenticatedSessionFactory usf = (UnauthenticatedSessionFactory) registry.lookup("session_factory");
+            us = usf.getSession();
+        } catch (SQLException | RemoteException | NotBoundException e) {
             e.printStackTrace();
             System.exit(1);
         }
