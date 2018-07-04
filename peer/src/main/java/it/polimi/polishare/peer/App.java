@@ -7,14 +7,12 @@ import io.datafx.controller.flow.container.DefaultFlowContainer;
 import io.datafx.controller.flow.context.FXMLViewFlowContext;
 import io.datafx.controller.flow.context.ViewFlowContext;
 import it.polimi.polishare.common.DHT.DHT;
-import it.polimi.polishare.common.DHT.DHTException;
 import it.polimi.polishare.common.Downloader;
 import it.polimi.polishare.common.NoteMetaData;
-import it.polimi.polishare.common.unauthenticated.UnauthenticatedSession;
-import it.polimi.polishare.common.unauthenticated.UnauthenticatedSessionFactory;
+import it.polimi.polishare.common.server.SessionFactory;
 import it.polimi.polishare.peer.controller.MainController;
-import it.polimi.polishare.peer.network.DHT.DHTImpl;
 import it.polimi.polishare.peer.network.DownloaderImpl;
+import it.polimi.polishare.peer.utils.CurrentSession;
 import it.polimi.polishare.peer.utils.DB;
 import javafx.application.Application;
 import javafx.collections.ObservableList;
@@ -27,11 +25,12 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.sql.SQLException;
 
 public class App  extends Application {
     public static DHT<NoteMetaData> dht;
-    public static UnauthenticatedSession us;
+    public static SessionFactory sf;
     public static Downloader dw;
     public static final String SERVER_IP = "localhost";
     private static final String MY_IP = "localhost";
@@ -47,8 +46,7 @@ public class App  extends Application {
             dw = new DownloaderImpl();
 
             Registry registry = LocateRegistry.getRegistry(SERVER_IP);
-            UnauthenticatedSessionFactory usf = (UnauthenticatedSessionFactory) registry.lookup("session_factory");
-            us = usf.getSession();
+            sf = (SessionFactory) registry.lookup("session_factory");
         } catch (SQLException | RemoteException | NotBoundException e) {
             e.printStackTrace();
             System.exit(1);
@@ -73,6 +71,14 @@ public class App  extends Application {
 
         stage.setScene(scene);
         stage.show();
+    }
+
+    @Override
+    public void stop() throws Exception {
+        super.stop();
+        if(CurrentSession.getSession() != null) CurrentSession.getSession().logout();
+        if(CurrentSession.getDHT() != null) CurrentSession.getDHT().leave();
+        UnicastRemoteObject.unexportObject(dw, true);
     }
 
     private Scene setUpFirstScene(Stage stage, DefaultFlowContainer container) {

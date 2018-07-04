@@ -11,10 +11,11 @@ import io.datafx.controller.flow.context.FXMLViewFlowContext;
 import io.datafx.controller.flow.context.ViewFlowContext;
 import it.polimi.polishare.common.DHT.DHTException;
 import it.polimi.polishare.common.NoteMetaData;
-import it.polimi.polishare.common.unauthenticated.LoginFailedException;
+import it.polimi.polishare.common.server.LoginFailedException;
+import it.polimi.polishare.common.server.Session;
 import it.polimi.polishare.peer.App;
-import it.polimi.polishare.peer.model.User;
 import it.polimi.polishare.peer.network.DHT.DHTImpl;
+import it.polimi.polishare.peer.utils.CurrentSession;
 import it.polimi.polishare.peer.utils.Notifications;
 import javafx.fxml.FXML;
 import javafx.scene.layout.StackPane;
@@ -53,14 +54,13 @@ public class LoginController {
         if(!(username.validate() && password.validate()))
             return;
 
-        String serverName;
         try {
-            serverName = App.us.login(username.getText(), password.getText());
+            Session session = App.sf.login(username.getText(), password.getText());
+            CurrentSession.setSession(session);
+            CurrentSession.setUsername(username.getText());
 
-            User.getInstance().setUsername(username.getText());
-
-            App.dht = new DHTImpl<>(username.getText(), NoteMetaData.class);
-            App.dht.join(App.SERVER_IP, serverName);
+            CurrentSession.setDHT(new DHTImpl<>(username.getText(), NoteMetaData.class));
+            CurrentSession.getDHT().join(App.SERVER_IP, CurrentSession.getSession().getServerDHTName());
 
             switchToAuthenticatedUI();
         } catch (LoginFailedException e) {

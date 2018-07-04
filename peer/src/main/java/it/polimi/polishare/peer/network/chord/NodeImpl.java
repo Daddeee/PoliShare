@@ -5,6 +5,7 @@ import it.polimi.polishare.common.chord.Node;
 import it.polimi.polishare.common.chord.Operation;
 
 import java.rmi.NoSuchObjectException;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -324,8 +325,9 @@ public class NodeImpl extends UnicastRemoteObject implements Node {
     @Override
     public void stop(){
         try{
-            UnicastRemoteObject.unexportObject(this, true);
-        } catch (NoSuchObjectException e){
+            nodeWorkers.stop();
+            stopRMI();
+        } catch (NotBoundException | RemoteException e){
             e.printStackTrace();
         }
     }
@@ -338,6 +340,12 @@ public class NodeImpl extends UnicastRemoteObject implements Node {
             registry = LocateRegistry.getRegistry(RMI_DEFAULT_PORT);
         }
         registry.rebind(name, this);
+    }
+
+    private void stopRMI() throws RemoteException, NotBoundException {
+        Registry registry = LocateRegistry.getRegistry(RMI_DEFAULT_PORT);;
+        registry.unbind(name);
+        UnicastRemoteObject.unexportObject(this, true);
     }
 
     private boolean ping(Node node) {

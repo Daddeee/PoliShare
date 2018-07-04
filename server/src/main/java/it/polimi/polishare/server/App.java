@@ -3,10 +3,10 @@ package it.polimi.polishare.server;
 import it.polimi.polishare.common.DHT.DHT;
 import it.polimi.polishare.common.DHT.DHTException;
 import it.polimi.polishare.common.NoteMetaData;
-import it.polimi.polishare.common.unauthenticated.UnauthenticatedSessionFactory;
+import it.polimi.polishare.common.server.SessionFactory;
 import it.polimi.polishare.server.Utils.DB;
 import it.polimi.polishare.server.network.DHT.DHTImpl;
-import it.polimi.polishare.server.network.unauthenticated.UnauthenticatedSessionFactoryImpl;
+import it.polimi.polishare.server.network.server.SessionFactoryImpl;
 
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -16,17 +16,17 @@ import java.sql.SQLException;
 public class App {
     public static DHT<NoteMetaData> dht;
     public static String DHT_NAME = "_SERVER_";
-    private static UnauthenticatedSessionFactory usf;
+    private static SessionFactory sf;
 
     public static void main( String[] args ) {
         try {
             DB.setUp();
 
-            usf = new UnauthenticatedSessionFactoryImpl();
+            sf = new SessionFactoryImpl();
             dht = new DHTImpl<>(DHT_NAME, NoteMetaData.class);
 
             Registry registry = LocateRegistry.getRegistry();
-            registry.rebind("session_factory", usf);
+            registry.rebind("session_factory", sf);
             dht.create();
         } catch (DHTException | RemoteException | SQLException e) {
             e.printStackTrace();

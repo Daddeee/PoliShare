@@ -4,13 +4,28 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.StackPane?>
 <?import java.lang.String?>
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <StackPane fx:id="root" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
     <styleClass>
         <String fx:value="side-menu"/>
     </styleClass>
-    <JFXListView fx:id="sideList">
-        <Label fx:id="catalog">I miei appunti</Label>
-        <Label fx:id="publish">Pubblica appunti</Label>
-        <Label fx:id="search">Ricerca</Label>
-    </JFXListView>
+    <BorderPane>
+        <top>
+            <JFXListView fx:id="sideList">
+                <Label fx:id="catalog">I miei appunti</Label>
+                <Label fx:id="publish">Pubblica appunti</Label>
+                <Label fx:id="search">Ricerca</Label>
+            </JFXListView>
+        </top>
+        <bottom>
+            <HBox>
+                <Region HBox.hgrow="ALWAYS"/>
+                <JFXButton buttonType="FLAT" onAction="#logout" style="-fx-text-fill: WHITE; -fx-background-color: rgb(102.0, 153.0, 102.0);-fx-font-size:14px;" text="Esci"/>
+                <Region HBox.hgrow="ALWAYS"/>
+            </HBox>
+        </bottom>
+    </BorderPane>
 </StackPane>

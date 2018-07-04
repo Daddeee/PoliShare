@@ -15,6 +15,8 @@ import it.polimi.polishare.peer.model.NoteDAO;
 import it.polimi.polishare.common.AddOwnerOperation;
 import it.polimi.polishare.common.RemoveOwnerOperation;
 import it.polimi.polishare.common.AddFailedException;
+import it.polimi.polishare.peer.utils.CurrentSession;
+import it.polimi.polishare.peer.utils.Notifications;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -91,7 +93,7 @@ public class SearchController {
                     rating.getSelectionModel().getSelectedItem()
             );
 
-            notes = App.dht.query(queryPredicate);
+            notes = CurrentSession.getDHT().query(queryPredicate);
         } catch (DHTException e) {
             e.printStackTrace();
         }
@@ -116,9 +118,11 @@ public class SearchController {
         NoteMetaData info = catalogTreeTableView.getSelectionModel().getSelectedItem().getValue().getNoteMetaData();
         byte[] fileBytes = null;
 
-        //TODO hai già il file !! (Error display)
         Note n = noteDAO.read(info.getTitle());
-        if(n != null) return;
+        if(n != null) {
+            Notifications.exception((StackPane) context.getRegisteredObject("Root"), new Exception("Possiedi già questo file."));
+            return;
+        }
 
 
         //TODO selectable destination path
@@ -136,12 +140,12 @@ public class SearchController {
                 output.flush();
                 output.close();
 
-                App.dht.exec(info.getTitle(), new AddOwnerOperation(App.dw));
+                CurrentSession.getDHT().exec(info.getTitle(), new AddOwnerOperation(App.dw));
                 noteDAO.create(newNote);
                 break;
             } catch (RemoteException e) {
                 try {
-                    App.dht.exec(info.getTitle(), new RemoveOwnerOperation(App.dw));
+                    CurrentSession.getDHT().exec(info.getTitle(), new RemoveOwnerOperation(App.dw));
                 } catch (DHTException ex) {}
             } catch (IOException | AddFailedException | DHTException e){
                 e.printStackTrace();

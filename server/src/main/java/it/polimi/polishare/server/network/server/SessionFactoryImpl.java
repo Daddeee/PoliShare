@@ -1,11 +1,13 @@
-package it.polimi.polishare.server.network.unauthenticated;
+package it.polimi.polishare.server.network.server;
+
 
 import it.polimi.polishare.common.AddFailedException;
 import it.polimi.polishare.common.DHT.DHTException;
 import it.polimi.polishare.common.NoteMetaData;
-import it.polimi.polishare.common.unauthenticated.LoginFailedException;
-import it.polimi.polishare.common.unauthenticated.RegistrationFailedException;
-import it.polimi.polishare.common.unauthenticated.UnauthenticatedSession;
+import it.polimi.polishare.common.server.LoginFailedException;
+import it.polimi.polishare.common.server.RegistrationFailedException;
+import it.polimi.polishare.common.server.Session;
+import it.polimi.polishare.common.server.SessionFactory;
 import it.polimi.polishare.server.App;
 import it.polimi.polishare.server.Utils.Mailer;
 import it.polimi.polishare.server.Utils.RandomString;
@@ -14,24 +16,34 @@ import it.polimi.polishare.server.model.UserDAO;
 import javax.mail.MessagingException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 
-public class UnauthenticatedSessionImpl extends UnicastRemoteObject implements UnauthenticatedSession {
+public class SessionFactoryImpl extends UnicastRemoteObject implements SessionFactory {
+    public static final ConcurrentHashMap<String, Session> activeSessions = new ConcurrentHashMap<>();
+
     private UserDAO dao;
     private RandomString randomString;
 
-    public UnauthenticatedSessionImpl() throws RemoteException {
+    public SessionFactoryImpl() throws RemoteException {
         this.dao = new UserDAO();
         this.randomString = new RandomString(10);
     }
 
     @Override
-    public String login(String username, String password) throws LoginFailedException {
-        if(dao.checkLogin(username, password))
-            return App.DHT_NAME;
-        else
+    public Session login(String username, String password) throws RemoteException, LoginFailedException {
+        if(dao.checkLogin(username, password)) {
+            if(activeSessions.get(username) != null) //TODO PING per vedere se attiva
+                throw new LoginFailedException("Questo utente risulta già loggato nel sistema.");
+
+            Session newSession = new SessionImpl(username);
+            activeSessions.put(username, newSession);
+            return newSession;
+        } else {
             throw new LoginFailedException("Combinazione username/password non valida.");
+        }
     }
 
     @Override

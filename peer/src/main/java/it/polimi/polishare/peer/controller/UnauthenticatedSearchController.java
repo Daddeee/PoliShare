@@ -82,7 +82,7 @@ public class UnauthenticatedSearchController {
                     rating.getSelectionModel().getSelectedItem()
             );
 
-            notes = App.us.query(queryPredicate);
+            notes = App.sf.query(queryPredicate);
         } catch (RemoteException e) {
             e.printStackTrace();
         }

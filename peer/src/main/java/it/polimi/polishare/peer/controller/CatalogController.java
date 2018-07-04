@@ -11,6 +11,8 @@ import it.polimi.polishare.peer.App;
 import it.polimi.polishare.peer.model.Note;
 import it.polimi.polishare.peer.model.NoteDAO;
 import it.polimi.polishare.common.RemoveOwnerOperation;
+import it.polimi.polishare.peer.utils.CurrentSession;
+import it.polimi.polishare.peer.utils.Notifications;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -36,7 +38,7 @@ public class CatalogController {
     public static final String CONTENT_PANE = "ContentPane";
 
     @FXMLViewFlowContext
-    private ViewFlowContext context;
+    public ViewFlowContext context;
 
     @FXML
     private StackPane root;
@@ -128,7 +130,7 @@ public class CatalogController {
 
         for(Note n : myNotes) {
             try {
-                NoteMetaData noteMetaData = App.dht.get(n.getTitle());
+                NoteMetaData noteMetaData = CurrentSession.getDHT().get(n.getTitle());
                 n.setNoteMetaData(noteMetaData);
 
                 data.add(new CatalogTreeTableNoteMetaData(n));
@@ -189,12 +191,12 @@ public class CatalogController {
             MenuItem delete = new MenuItem("Elimina");
             delete.setOnAction(e -> {
                 try {
-                    App.dht.exec(row.getTreeItem().getValue().title.get(), new RemoveOwnerOperation(App.dw));
+                    CurrentSession.getDHT().exec(row.getTreeItem().getValue().title.get(), new RemoveOwnerOperation(App.dw));
 
                     NoteDAO noteDAO = new NoteDAO();
                     noteDAO.delete(row.getTreeItem().getValue().title.get());
                 } catch (DHTException ex) {
-                    //TODO errori
+                    Notifications.exception((StackPane) context.getRegisteredObject("Root"), ex);
                 }
             });
 

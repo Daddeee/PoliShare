@@ -3,15 +3,16 @@ package it.polimi.polishare.peer.controller;
 import it.polimi.polishare.common.DHT.DHTException;
 import it.polimi.polishare.common.NoteMetaData;
 import it.polimi.polishare.common.ReviewMetaData;
-import it.polimi.polishare.peer.App;
 import it.polimi.polishare.peer.model.Note;
 import it.polimi.polishare.common.UpdateReviewOperation;
-import it.polimi.polishare.peer.model.User;
+import it.polimi.polishare.peer.utils.CurrentSession;
+import it.polimi.polishare.peer.utils.Notifications;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 import java.util.Arrays;
@@ -48,7 +49,7 @@ public class AddReviewController {
             ReviewMetaData myReview = null;
 
             for (ReviewMetaData r : note.getNoteMetaData().getReviewsMetaData()) {
-                if (r.getAuthor().equals(User.getInstance().getUsername())) {
+                if (r.getAuthor().equals(CurrentSession.getCurrentUsername())) {
                     myReview = r;
                     break;
                 }
@@ -57,7 +58,7 @@ public class AddReviewController {
             if(myReview != null)
                 newReview = myReview;
             else
-                newReview = new ReviewMetaData(note.getNoteMetaData(), User.getInstance().getUsername(), "", 0);
+                newReview = new ReviewMetaData(note.getNoteMetaData(), CurrentSession.getCurrentUsername(), "", 0);
         }
 
         initNewReviewRating();
@@ -112,16 +113,18 @@ public class AddReviewController {
     public void save(ActionEvent e){
         newReview.setBody(newReviewBody.getText());
 
-        //TODO ERRORE
-        if(count > 500) return;
+        if(count > 500) {
+            Notifications.exception((StackPane) catalogController.context.getRegisteredObject("Root"), new Exception("Le recensioni possono avere al massimo 500 parole."));
+            return;
+        }
 
         try{
-            App.dht.exec(note.getTitle(), new UpdateReviewOperation(newReview));
+            CurrentSession.getDHT().exec(note.getTitle(), new UpdateReviewOperation(newReview));
 
-            NoteMetaData noteMetaData = App.dht.get(note.getTitle());
+            NoteMetaData noteMetaData = CurrentSession.getDHT().get(note.getTitle());
             catalogController.updateData(noteMetaData);
         } catch (DHTException ex){
-            //TODO GESTIONE ERRORI
+            Notifications.exception((StackPane) catalogController.context.getRegisteredObject("Root"), ex);
             ex.printStackTrace();
         }
     }

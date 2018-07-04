@@ -10,6 +10,7 @@ import it.polimi.polishare.peer.App;
 import it.polimi.polishare.peer.model.Note;
 import it.polimi.polishare.peer.model.NoteDAO;
 import it.polimi.polishare.common.AddFailedException;
+import it.polimi.polishare.peer.utils.CurrentSession;
 import javafx.fxml.FXML;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -99,7 +100,7 @@ public class PublishController {
         newNote.setNoteMetaData(newNoteMetaData);
 
         try {
-            App.dht.put(newNoteMetaData.getTitle(), newNoteMetaData);
+            CurrentSession.getDHT().put(newNoteMetaData.getTitle(), newNoteMetaData);
             noteDAO.create(newNote);
 
             title.clear();
