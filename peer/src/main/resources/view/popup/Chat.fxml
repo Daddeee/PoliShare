@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.geometry.Insets?>
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="it.polimi.polishare.peer.controller.ChatController"
+      fx:id="root">
+    <ScrollPane VBox.vgrow="ALWAYS">
+        <VBox fx:id="messageBox" spacing="15.0"/>
+    </ScrollPane>
+    <HBox maxHeight="40.0" fx:id="sendBox" spacing="6.0">
+        <TextField fx:id="messageField" HBox.hgrow="ALWAYS"/>
+        <JFXButton fx:id="sendButton" buttonType="FLAT" onAction="#send" style="-fx-text-fill: WHITE; -fx-background-color: rgb(102.0, 153.0, 102.0);-fx-font-size:14px;" text="Invia"/>
+        <HBox.margin>
+            <Insets right="2.0" left="2.0"/>
+        </HBox.margin>
+    </HBox>
+</VBox>

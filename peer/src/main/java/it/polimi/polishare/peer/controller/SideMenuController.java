@@ -78,12 +78,7 @@ public class SideMenuController {
         try {
             switchToUnauthenticatedUI();
 
-            CurrentSession.getSession().logout();
-            CurrentSession.getDHT().leave();
-
-            CurrentSession.setSession(null);
-            CurrentSession.setUsername(null);
-            CurrentSession.setDHT(null);
+            CurrentSession.shutDown();
         } catch (FlowException | RemoteException | DHTException e) {
             Notifications.exception((StackPane) context.getRegisteredObject("Root"), e);
         }

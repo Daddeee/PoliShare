@@ -1,9 +1,6 @@
 package it.polimi.polishare.peer.controller;
 
-import com.jfoenix.controls.JFXDrawer;
-import com.jfoenix.controls.JFXHamburger;
-import com.jfoenix.controls.JFXPopup;
-import com.jfoenix.controls.JFXRippler;
+import com.jfoenix.controls.*;
 import io.datafx.controller.ViewController;
 import io.datafx.controller.flow.Flow;
 import io.datafx.controller.flow.FlowException;
@@ -13,10 +10,14 @@ import io.datafx.controller.flow.context.FXMLViewFlowContext;
 import io.datafx.controller.flow.context.ViewFlowContext;
 import javafx.animation.Transition;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Bounds;
+import javafx.scene.Parent;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 
 import javax.annotation.PostConstruct;
+import java.io.IOException;
 
 @ViewController(value = "/view/Main.fxml", title = "Polishare")
 public class MainController {
@@ -31,13 +32,10 @@ public class MainController {
     private JFXHamburger titleBurger;
     @FXML
     private JFXDrawer drawer;
-
     @FXML
-    private StackPane optionsBurger;
-    @FXML
-    private JFXRippler optionsRippler;
+    private JFXButton showChatButton;
 
-    private JFXPopup toolbarPopup;
+    private JFXPopup chatPopup;
 
     @PostConstruct
     public void init() throws FlowException {
@@ -69,9 +67,30 @@ public class MainController {
         context.register("ContentPane", drawer.getContent().get(0));
         context.register("Root", root);
         context.register("Drawer", drawer);
+        context.register("ShowChatButton", showChatButton);
 
         Flow sideMenuFlow = new Flow(UnauthenticatedSideMenuController.class);
         final FlowHandler sideMenuFlowHandler = sideMenuFlow.createHandler(context);
         drawer.setSidePane(sideMenuFlowHandler.start(new AnimatedFlowContainer(Duration.millis(320))));
+    }
+
+    @FXML
+    public void showChat() {
+        double popupHeight = drawer.getHeight()*4/5;
+        double popupWidth = drawer.getWidth()*4/5;
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/popup/Chat.fxml"));
+            chatPopup = new JFXPopup(loader.load());
+
+            ((ChatController) loader.getController()).initData(popupHeight, popupWidth);
+        } catch (IOException ioExc) {
+            ioExc.printStackTrace();
+        }
+        Bounds rootBounds = drawer.getLayoutBounds();
+
+        chatPopup.show(drawer, JFXPopup.PopupVPosition.TOP, JFXPopup.PopupHPosition.LEFT,
+                (rootBounds.getWidth() - popupWidth) / 2,
+                (rootBounds.getHeight() - popupHeight) / 2);
     }
 }
