@@ -9,6 +9,7 @@ import io.datafx.controller.flow.context.ViewFlowContext;
 import it.polimi.polishare.common.DHT.DHT;
 import it.polimi.polishare.common.Downloader;
 import it.polimi.polishare.common.NoteMetaData;
+import it.polimi.polishare.common.server.Message;
 import it.polimi.polishare.common.server.SessionFactory;
 import it.polimi.polishare.peer.controller.MainController;
 import it.polimi.polishare.peer.network.DownloaderImpl;
@@ -29,7 +30,6 @@ import java.rmi.server.UnicastRemoteObject;
 import java.sql.SQLException;
 
 public class App  extends Application {
-    public static DHT<NoteMetaData> dht;
     public static SessionFactory sf;
     public static Downloader dw;
     public static final String SERVER_IP = "localhost";
@@ -76,8 +76,7 @@ public class App  extends Application {
     @Override
     public void stop() throws Exception {
         super.stop();
-        if(CurrentSession.getSession() != null) CurrentSession.getSession().logout();
-        if(CurrentSession.getDHT() != null) CurrentSession.getDHT().leave();
+        CurrentSession.shutDown();
         UnicastRemoteObject.unexportObject(dw, true);
     }
 
