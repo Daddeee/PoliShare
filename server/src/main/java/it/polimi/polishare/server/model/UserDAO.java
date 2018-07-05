@@ -20,14 +20,18 @@ public class UserDAO {
             PreparedStatement fetchUsername = c.prepareStatement(fetchUsernameStatement);
             fetchUsername.setString(1, username);
             ResultSet rsUsername = fetchUsername.executeQuery();
-            rsUsername.next();
-            if(rsUsername.next()) throw new AddFailedException("Nome utente non disponibile.");
+            if(rsUsername.next()){
+                DB.closeConnection(c);
+                throw new AddFailedException("Nome utente non disponibile.");
+            }
 
             PreparedStatement fetchMail = c.prepareStatement(fetchMailStatement);
             fetchMail.setString(1, mail);
             ResultSet rsMail = fetchMail.executeQuery();
-            rsMail.next();
-            if(rsMail.next()) throw new AddFailedException("Indirizzo email già utilizzato da un altro account.");
+            if(rsMail.next()) {
+                DB.closeConnection(c);
+                throw new AddFailedException("Indirizzo email già utilizzato da un altro account.");
+            }
 
 
             PreparedStatement addUser = c.prepareStatement(addUserQuery);
