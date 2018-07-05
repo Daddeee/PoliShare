@@ -1,4 +1,4 @@
-package it.polimi.polishare.peer.utils;
+package it.polimi.polishare.server.Utils;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

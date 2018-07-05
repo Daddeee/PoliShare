@@ -5,6 +5,7 @@ import it.polimi.polishare.common.DHT.DHTException;
 import it.polimi.polishare.common.NoteMetaData;
 import it.polimi.polishare.common.server.SessionFactory;
 import it.polimi.polishare.server.Utils.DB;
+import it.polimi.polishare.server.Utils.Settings;
 import it.polimi.polishare.server.network.DHT.DHTImpl;
 import it.polimi.polishare.server.network.server.SessionFactoryImpl;
 
@@ -19,6 +20,8 @@ public class App {
     private static SessionFactory sf;
 
     public static void main( String[] args ) {
+        System.setProperty("java.rmi.server.hostname", Settings.getProperty("my_ip"));
+
         try {
             DB.setUp();
 
