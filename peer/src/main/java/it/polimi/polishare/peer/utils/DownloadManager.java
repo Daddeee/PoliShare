@@ -7,13 +7,16 @@ import it.polimi.polishare.peer.controller.DownloadController;
 import it.polimi.polishare.peer.model.Note;
 import it.polimi.polishare.peer.model.NoteDAO;
 import javafx.application.Platform;
+import org.apache.commons.codec.digest.DigestUtils;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class DownloadManager {
     private static DownloadController downloadController;
@@ -47,18 +50,31 @@ public class DownloadManager {
         Download download = new Download(size, chunksNumber, md5);
         activeDownloads.put(note.getTitle(), download);
 
+        List<Downloader> activeDownloaders = getActiveDownloaders(note.getNoteMetaData());
+
         for (int i = 0; i < chunksNumber; i++) {
             int from = i * chunkSize;
             int to = (from + chunkSize - 1 >= size) ? size - 1 : from + chunkSize - 1;
 
+            Downloader d = activeDownloaders.get(i%activeDownloaders.size());
             Thread downloader = new Thread(() -> {
-                try {
-                    byte[] chunk = master.getChunk(note.getTitle(), from, to);
-                    download.addChunk(chunk, from, to);
-                    Platform.runLater(() -> {
-                        downloadController.updateDownload(note.getTitle(), download);
-                    });
-                } catch (RemoteException e) {
+                Downloader current = d;
+                int k = 0;
+                while (true) {
+                    try {
+                        byte[] chunk = current.getChunk(note.getTitle(), from, to);
+                        download.addChunk(chunk, from, to);
+
+                        Platform.runLater(() -> {
+                            downloadController.updateDownload(note.getTitle(), download);
+                        });
+
+                        return;
+                    } catch (RemoteException e) {
+                        if(k >= activeDownloaders.size()) return;
+                        current = activeDownloaders.get(k);
+                        k++;
+                    }
                 }
 
             });
@@ -69,6 +85,9 @@ public class DownloadManager {
                 e.printStackTrace();
             }
         }
+
+        String downloadedMD5 = DigestUtils.md5Hex(download.getFileBytes());
+        if(!downloadedMD5.equals(md5)) throw new RuntimeException("Il file ricevuto non corrisponde al file remoto");
 
         try {
             File file = new File(note.getPath());
@@ -114,5 +133,17 @@ public class DownloadManager {
         }
 
         return null;
+    }
+
+    private static List<Downloader> getActiveDownloaders(NoteMetaData noteMetaData) {
+        List<Downloader> activeDownloaders = new ArrayList<>();
+        for(Downloader d : noteMetaData.getOwners()){
+            try{
+                d.ping();
+                activeDownloaders.add(d);
+            } catch (RemoteException e) {}
+        }
+
+        return activeDownloaders;
     }
 }
