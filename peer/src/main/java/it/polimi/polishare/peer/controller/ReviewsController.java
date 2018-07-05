@@ -1,8 +1,10 @@
 package it.polimi.polishare.peer.controller;
 import com.jfoenix.controls.JFXProgressBar;
+import it.polimi.polishare.common.DHT.DHTException;
 import it.polimi.polishare.common.ReviewMetaData;
 import it.polimi.polishare.peer.App;
 import it.polimi.polishare.peer.model.Note;
+import it.polimi.polishare.peer.utils.CurrentSession;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -48,6 +50,11 @@ public class ReviewsController {
 
     public void initData(Note note, double height, double width){
         this.note = note;
+        
+        try {
+            this.note.setNoteMetaData(CurrentSession.getDHT().get(note.getTitle()));
+        } catch (DHTException e) {}
+
 
         int[] starsCount = new int[6];
         double total = 0;

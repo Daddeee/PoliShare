@@ -60,10 +60,10 @@ public class AddReviewController {
 
             if(myReview != null) {
                 newReview = myReview;
-                addReviewButton.setText("Salva");
+                addReviewButton.setText("Modifica");
             } else {
                 newReview = new ReviewMetaData(note.getNoteMetaData(), CurrentSession.getCurrentUsername(), "", 0);
-                addReviewButton.setText("Modifica");
+                addReviewButton.setText("Salva");
             }
         }
 
