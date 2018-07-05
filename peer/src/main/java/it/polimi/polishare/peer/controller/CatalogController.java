@@ -36,6 +36,8 @@ import javax.annotation.PostConstruct;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.function.Function;
 
@@ -215,12 +217,13 @@ public class CatalogController {
             delete.setOnAction(e -> {
                 try {
                     CurrentSession.getDHT().exec(row.getTreeItem().getValue().title.get(), new RemoveOwnerOperation(App.dw));
+                    Files.deleteIfExists(Paths.get(row.getTreeItem().getValue().getNote().getPath()));
 
                     data.remove(row.getItem());
 
                     NoteDAO noteDAO = new NoteDAO();
                     noteDAO.delete(row.getTreeItem().getValue().title.get());
-                } catch (DHTException ex) {
+                } catch (DHTException | IOException ex) {
                     Notifications.exception(ex);
                 }
             });
