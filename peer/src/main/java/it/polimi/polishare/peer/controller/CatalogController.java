@@ -13,6 +13,7 @@ import it.polimi.polishare.peer.model.NoteDAO;
 import it.polimi.polishare.common.RemoveOwnerOperation;
 import it.polimi.polishare.peer.utils.CurrentSession;
 import it.polimi.polishare.peer.utils.Notifications;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -25,10 +26,14 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.control.MenuItem;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 
 import javax.annotation.PostConstruct;
+import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.function.Function;
@@ -146,6 +151,19 @@ public class CatalogController {
             final TreeTableRow<CatalogTreeTableNoteMetaData> row = new TreeTableRow<>();
             final ContextMenu contextMenu = new ContextMenu();
 
+            MenuItem open = new MenuItem("Apri");
+            open.setOnAction(event -> {
+                new Thread(() ->  {
+                    File file = new File(row.getTreeItem().getValue().getNote().getPath());
+                    try {
+                        Desktop.getDesktop().open(file);
+                    } catch (IOException e) {
+                        //Notifications.exception((StackPane) context.getRegisteredObject("Root"), e);
+                        e.printStackTrace();
+                    }
+                }).start();
+            });
+
             MenuItem reviews = new MenuItem("Visualizza Recensioni");
             reviews.setOnAction(e -> {
                 double popupHeight = catalogTreeTableView.getHeight()*4/5;
@@ -200,7 +218,7 @@ public class CatalogController {
                 }
             });
 
-            contextMenu.getItems().addAll(reviews, addReview, delete);
+            contextMenu.getItems().addAll(open, reviews, addReview, delete);
 
             row.setContextMenu(contextMenu);
             return row;
