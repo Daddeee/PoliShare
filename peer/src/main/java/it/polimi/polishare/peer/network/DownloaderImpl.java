@@ -41,6 +41,7 @@ public class DownloaderImpl extends UnicastRemoteObject implements Downloader {
     @Override
     public byte[] getChunk(String title, int from, int to) {
         try {
+            Thread.sleep(1000);
             byte[] fileBytes = readFile(title);
             return Arrays.copyOfRange(fileBytes, from, to + 1);
         } catch(Exception e){
@@ -62,7 +63,5 @@ public class DownloaderImpl extends UnicastRemoteObject implements Downloader {
     }
 
     @Override
-    public void ping() {
-        System.out.println("Received ping.");
-    }
+    public void ping() {}
 }

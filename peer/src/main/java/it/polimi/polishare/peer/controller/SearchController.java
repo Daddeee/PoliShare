@@ -130,7 +130,6 @@ public class SearchController {
         if(catalogTreeTableView.getSelectionModel().getSelectedItem() == null) return;
         NoteDAO noteDAO = new NoteDAO();
         NoteMetaData info = catalogTreeTableView.getSelectionModel().getSelectedItem().getValue().getNoteMetaData();
-        byte[] fileBytes = null;
 
         Note n = noteDAO.read(info.getTitle());
         if(n != null) {
@@ -139,10 +138,9 @@ public class SearchController {
         }
 
         String path = this.path.getText();
-
         Note newNote = new Note(info.getTitle(), path + "/" + info.getTitle() + ".pdf");
         newNote.setNoteMetaData(info);
-        DownloadManager.download(newNote);
+        new Thread(() -> DownloadManager.download(newNote) ).start();
         downloadDialog.close();
     }
 

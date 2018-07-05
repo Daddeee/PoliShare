@@ -216,6 +216,8 @@ public class CatalogController {
                 try {
                     CurrentSession.getDHT().exec(row.getTreeItem().getValue().title.get(), new RemoveOwnerOperation(App.dw));
 
+                    data.remove(row.getItem());
+
                     NoteDAO noteDAO = new NoteDAO();
                     noteDAO.delete(row.getTreeItem().getValue().title.get());
                 } catch (DHTException ex) {
