@@ -62,7 +62,6 @@ public class UnauthenticatedSearchController {
     @FXML
     private JFXButton downloadButton;
 
-
     public ObservableList<SearchTreeTableNoteMetaData> data = FXCollections.observableArrayList();
 
     @FXML
@@ -101,7 +100,13 @@ public class UnauthenticatedSearchController {
     }
 
     @FXML
+    public void searchPath() {}
+
+    @FXML
     public void download() {}
+
+    @FXML
+    public void showDownload() {}
 
     @PostConstruct
     public void init() {

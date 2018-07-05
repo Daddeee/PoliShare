@@ -191,8 +191,8 @@ public class CatalogController {
 
             MenuItem addReview = new MenuItem("Aggiungi Recensione");
             addReview.setOnAction(e -> {
-                double popupHeight = catalogTreeTableView.getHeight()*4/5;
-                double popupWidth = catalogTreeTableView.getWidth()*4/5;
+                double popupHeight = catalogTreeTableView.getHeight()*3/5;
+                double popupWidth = catalogTreeTableView.getWidth()*3/5;
 
                 try {
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/popup/AddReview.fxml"));

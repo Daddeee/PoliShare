@@ -10,6 +10,7 @@
 <?import com.jfoenix.validation.RequiredFieldValidator?>
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXPasswordField?>
 <StackPane fx:id="root" xmlns="http://javafx.com/javafx/8.0.162-ea" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <VBox prefWidth="300" spacing="40" maxWidth="400" alignment="CENTER">
@@ -24,13 +25,13 @@
                     </JFXTextField>
                 </HBox>
                 <HBox prefHeight="20" maxWidth="300">
-                    <JFXTextField fx:id="password" promptText="Password" prefHeight="20">
+                    <JFXPasswordField fx:id="password" promptText="Password" prefHeight="20">
                         <validators>
                             <RequiredFieldValidator message="Campo richiesto!">
                                 <FontAwesomeIconView glyphName="WARNING" style="-fx-font-family: FontAwesome;"/>
                             </RequiredFieldValidator>
                         </validators>
-                    </JFXTextField>
+                    </JFXPasswordField>
                 </HBox>
                 <JFXButton onAction="#login" prefWidth="100" prefHeight="40" buttonType="FLAT" text="Accedi"
                            style="-fx-text-fill: WHITE; -fx-background-color: rgb(102.0, 153.0, 102.0);-fx-font-size:14px;"/>

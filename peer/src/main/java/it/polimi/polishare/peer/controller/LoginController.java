@@ -2,6 +2,7 @@ package it.polimi.polishare.peer.controller;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDrawer;
+import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
 import io.datafx.controller.ViewController;
 import io.datafx.controller.flow.Flow;
@@ -34,7 +35,7 @@ public class LoginController {
     @FXML
     private JFXTextField username;
     @FXML
-    private JFXTextField password;
+    private JFXPasswordField password;
 
     @PostConstruct
     public void init() {

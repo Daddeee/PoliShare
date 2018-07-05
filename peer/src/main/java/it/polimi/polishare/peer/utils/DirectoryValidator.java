@@ -7,7 +7,7 @@ import javafx.scene.control.TextInputControl;
 import java.io.File;
 
 @DefaultProperty("icon")
-public class FolderValidator extends ValidatorBase {
+public class DirectoryValidator extends ValidatorBase {
     @Override
     protected void eval() {
         TextInputControl textField = (TextInputControl)this.srcControl.get();

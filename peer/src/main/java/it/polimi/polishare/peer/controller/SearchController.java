@@ -28,6 +28,9 @@ import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 import javax.annotation.PostConstruct;
 import java.io.BufferedOutputStream;
@@ -73,6 +76,10 @@ public class SearchController {
     private JFXTreeTableColumn<SearchTreeTableNoteMetaData, Integer> yearColumn;
     @FXML
     private HBox filterBox;
+    @FXML
+    private JFXDialog downloadDialog;
+    @FXML
+    private JFXTextField path;
 
     public ObservableList<SearchTreeTableNoteMetaData> data = FXCollections.observableArrayList();
 
@@ -112,6 +119,12 @@ public class SearchController {
     }
 
     @FXML
+    public void showDownload() {
+        downloadDialog.setTransitionType(JFXDialog.DialogTransition.CENTER);
+        downloadDialog.show((StackPane) context.getRegisteredObject("Root"));
+    }
+
+    @FXML
     public void download() {
         if(catalogTreeTableView.getSelectionModel().getSelectedItem() == null) return;
         NoteDAO noteDAO = new NoteDAO();
@@ -126,7 +139,7 @@ public class SearchController {
 
 
         //TODO selectable destination path
-        String path = "shared/" + info.getTitle() + ".pdf";
+        String path = this.path.getText();
 
         Note newNote = new Note(info.getTitle(), path);
         for(Downloader d : info.getOwners()){
@@ -163,6 +176,17 @@ public class SearchController {
         rating.setItems(ratingsValue);
     }
 
+    @FXML
+    private void searchPath(){
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        Stage stage = (Stage) context.getRegisteredObject("Stage");
+        File file = directoryChooser.showDialog(stage);
+
+        if(file != null) {
+            path.setText(file.getPath());
+        }
+    }
+
     private void setupCatalogTableView() {
         setupCellValueFactory(titleColumn, SearchTreeTableNoteMetaData::titleProperty);
         setupCellValueFactory(authorColumn, SearchTreeTableNoteMetaData::authorProperty);
@@ -191,7 +215,7 @@ public class SearchController {
         });
     }
 
-    public void updateTableData(List<NoteMetaData> notes) {
+    private void updateTableData(List<NoteMetaData> notes) {
         data.clear();
 
         for(NoteMetaData n : notes)
