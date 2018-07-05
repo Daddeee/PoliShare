@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class DB {
-    private static String dbName =  "polishare2.db";
+    private static String dbName =  "polishare.db";
 
     public static void setUp() throws SQLException {
         String createNotesTable = "CREATE TABLE IF NOT EXISTS notes (" +
