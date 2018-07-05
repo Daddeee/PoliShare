@@ -140,7 +140,7 @@ public class SearchController {
         String path = this.path.getText();
         Note newNote = new Note(info.getTitle(), path + "/" + info.getTitle() + ".pdf");
         newNote.setNoteMetaData(info);
-        new Thread(() -> DownloadManager.download(newNote) ).start();
+        DownloadManager.register(newNote);
         downloadDialog.close();
     }
 

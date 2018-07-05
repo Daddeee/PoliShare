@@ -27,11 +27,15 @@ public class DownloadManager {
         return activeDownloads;
     }
 
+    public static void removeActiveDownload(String title) {
+        activeDownloads.remove(title);
+    }
+
     public static void setDownloadController(DownloadController downloadController) {
         DownloadManager.downloadController = downloadController;
     }
 
-    public static void download(Note note) {
+    public static void register(Note note) {
         Downloader master = getMaster(note.getNoteMetaData());
         if (master == null) throw new RuntimeException("Non è stata trovata nessuna sorgente disponibile al download.");
 
@@ -47,14 +51,16 @@ public class DownloadManager {
         int chunkSize = calculateChunkSize(size);
         int chunksNumber = calculateChunksNumber(size, chunkSize);
 
-        Download download = new Download(size, chunksNumber, md5);
+        Download download = new Download(note, size, chunksNumber, chunkSize, md5);
         activeDownloads.put(note.getTitle(), download);
+    }
 
-        List<Downloader> activeDownloaders = getActiveDownloaders(note.getNoteMetaData());
+    public static void start(Download download) {
+        List<Downloader> activeDownloaders = getActiveDownloaders(download.getNote().getNoteMetaData());
 
-        for (int i = 0; i < chunksNumber; i++) {
-            int from = i * chunkSize;
-            int to = (from + chunkSize - 1 >= size) ? size - 1 : from + chunkSize - 1;
+        for (int i = 0; i < download.getChunksNumber(); i++) {
+            int from = i * download.getChunkSize();
+            int to = (from + download.getChunkSize() - 1 >= download.getSize()) ? download.getSize() - 1 : from + download.getChunkSize() - 1;
 
             Downloader d = activeDownloaders.get(i%activeDownloaders.size());
             Thread downloader = new Thread(() -> {
@@ -62,11 +68,11 @@ public class DownloadManager {
                 int k = 0;
                 while (true) {
                     try {
-                        byte[] chunk = current.getChunk(note.getTitle(), from, to);
+                        byte[] chunk = current.getChunk(download.getNote().getTitle(), from, to);
                         download.addChunk(chunk, from, to);
 
                         Platform.runLater(() -> {
-                            downloadController.updateDownload(note.getTitle(), download);
+                            downloadController.updateDownload(download.getNote().getTitle(), download);
                         });
 
                         return;
@@ -87,12 +93,12 @@ public class DownloadManager {
         }
 
         String downloadedMD5 = DigestUtils.md5Hex(download.getFileBytes());
-        if(!downloadedMD5.equals(md5)) throw new RuntimeException("Il file ricevuto non corrisponde al file remoto");
+        if(!downloadedMD5.equals(download.getMd5())) throw new RuntimeException("Il file ricevuto non corrisponde al file remoto");
 
         try {
-            File file = new File(note.getPath());
+            File file = new File(download.getNote().getPath());
             BufferedOutputStream output = new BufferedOutputStream(new FileOutputStream(file.getName()));
-            output.write(download.getFileBytes(), 0, size);
+            output.write(download.getFileBytes(), 0, download.getSize());
             output.flush();
             output.close();
         } catch (IOException e) {
@@ -100,13 +106,13 @@ public class DownloadManager {
         }
 
         try {
-            CurrentSession.getDHT().exec(note.getTitle(), new AddOwnerOperation(App.dw));
-            new NoteDAO().create(note);
+            CurrentSession.getDHT().exec(download.getNote().getTitle(), new AddOwnerOperation(App.dw));
+            new NoteDAO().create(download.getNote());
         } catch (DHTException | AddFailedException e) {
             e.printStackTrace();
         }
 
-        activeDownloads.remove(note.getTitle());
+        activeDownloads.remove(download.getNote().getTitle());
     }
 
     private static int calculateChunksNumber(int size, int chunkSize) {
