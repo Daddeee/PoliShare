@@ -5,6 +5,7 @@ import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 import io.datafx.controller.ViewController;
 import io.datafx.controller.flow.context.FXMLViewFlowContext;
 import io.datafx.controller.flow.context.ViewFlowContext;
+import it.polimi.polishare.common.AddOwnerOperation;
 import it.polimi.polishare.common.DHT.DHTException;
 import it.polimi.polishare.common.NoteMetaData;
 import it.polimi.polishare.peer.App;
@@ -139,7 +140,7 @@ public class CatalogController {
                 if(f.exists() && !f.isDirectory()) {
                     NoteMetaData noteMetaData = CurrentSession.getDHT().get(n.getTitle());
                     n.setNoteMetaData(noteMetaData);
-
+                    CurrentSession.getDHT().exec(n.getTitle(), new AddOwnerOperation(App.dw));
                     data.add(new CatalogTreeTableNoteMetaData(n));
                 } else {
                     noteDAO.delete(n.getTitle());

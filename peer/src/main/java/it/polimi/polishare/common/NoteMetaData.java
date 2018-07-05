@@ -82,6 +82,7 @@ public class NoteMetaData implements Serializable {
     }
 
     public void addOwner(Downloader owner) {
+        this.owners.remove(owner);
         this.owners.add(owner);
     }
 
