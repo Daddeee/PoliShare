@@ -13,6 +13,7 @@ import io.datafx.controller.flow.context.FXMLViewFlowContext;
 import io.datafx.controller.flow.context.ViewFlowContext;
 import io.datafx.controller.util.VetoException;
 import it.polimi.polishare.common.DHT.DHTException;
+import it.polimi.polishare.common.Downloader;
 import it.polimi.polishare.peer.utils.CurrentSession;
 import it.polimi.polishare.peer.utils.Notifications;
 import javafx.application.Platform;
@@ -41,6 +42,9 @@ public class SideMenuController {
     @FXML
     @ActionTrigger("search")
     private Label search;
+    @FXML
+    @ActionTrigger("download")
+    private Label download;
 
     @FXML
     private JFXListView<Label> sideList;
@@ -68,6 +72,7 @@ public class SideMenuController {
         bindNodeToController(catalog, CatalogController.class, contentFlow);
         bindNodeToController(publish, PublishController.class, contentFlow);
         bindNodeToController(search, SearchController.class, contentFlow);
+        bindNodeToController(download, DownloadController.class, contentFlow);
     }
 
     private void bindNodeToController(Node node, Class<?> controllerClass, Flow flow) {

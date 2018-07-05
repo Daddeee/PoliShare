@@ -16,6 +16,7 @@ import it.polimi.polishare.common.AddOwnerOperation;
 import it.polimi.polishare.common.RemoveOwnerOperation;
 import it.polimi.polishare.common.AddFailedException;
 import it.polimi.polishare.peer.utils.CurrentSession;
+import it.polimi.polishare.peer.utils.DownloadManager;
 import it.polimi.polishare.peer.utils.Notifications;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -137,34 +138,12 @@ public class SearchController {
             return;
         }
 
-
-        //TODO selectable destination path
         String path = this.path.getText();
 
-        Note newNote = new Note(info.getTitle(), path);
-        for(Downloader d : info.getOwners()){
-            try{
-                d.ping();
-                fileBytes = d.download(info.getTitle());
-
-                File file = new File(path);
-                BufferedOutputStream output = new BufferedOutputStream(new FileOutputStream(file.getName()));
-                output.write(fileBytes,0,fileBytes.length);
-                output.flush();
-                output.close();
-
-                CurrentSession.getDHT().exec(info.getTitle(), new AddOwnerOperation(App.dw));
-                noteDAO.create(newNote);
-                break;
-            } catch (RemoteException e) {
-                try {
-                    CurrentSession.getDHT().exec(info.getTitle(), new RemoveOwnerOperation(App.dw));
-                } catch (DHTException ex) {}
-            } catch (IOException | AddFailedException | DHTException e){
-                e.printStackTrace();
-            }
-        }
-
+        Note newNote = new Note(info.getTitle(), path + "/" + info.getTitle() + ".pdf");
+        newNote.setNoteMetaData(info);
+        DownloadManager.download(newNote);
+        downloadDialog.close();
     }
 
     @PostConstruct

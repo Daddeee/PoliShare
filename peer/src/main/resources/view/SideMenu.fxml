@@ -18,6 +18,7 @@
                 <Label fx:id="catalog">I miei appunti</Label>
                 <Label fx:id="publish">Pubblica appunti</Label>
                 <Label fx:id="search">Ricerca</Label>
+                <Label fx:id="download">Download</Label>
             </JFXListView>
         </top>
         <bottom>
