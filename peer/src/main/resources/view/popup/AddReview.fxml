@@ -17,18 +17,22 @@
 <VBox fx:id="main" xmlns="http://javafx.com/javafx/8.0.162-ea"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="it.polimi.polishare.peer.controller.AddReviewController">
-    <HBox spacing="2.0">
+    <HBox spacing="2.0" VBox.vgrow="ALWAYS" alignment="CENTER">
+        <Region HBox.hgrow="ALWAYS"/>
         <Button styleClass="star-button" fx:id="newReviewOneStar" onAction="#setOneStar"/>
         <Button styleClass="star-button" fx:id="newReviewTwoStar" onAction="#setTwoStar"/>
         <Button styleClass="star-button" fx:id="newReviewThreeStar" onAction="#setThreeStar"/>
         <Button styleClass="star-button" fx:id="newReviewFourStar" onAction="#setFourStar"/>
         <Button styleClass="star-button" fx:id="newReviewFiveStar" onAction="#setFiveStar"/>
         <Region HBox.hgrow="ALWAYS"/>
+    </HBox>
+    <TextArea fx:id="newReviewBody" VBox.vgrow="ALWAYS"/>
+    <HBox VBox.vgrow="ALWAYS" alignment="CENTER">
         <Label text="Numero parole (max 500): "/>
         <Label fx:id="wordsCount"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <JFXButton fx:id="addReviewButton" buttonType="FLAT"  onAction="#save" style="-fx-text-fill: WHITE; -fx-background-color: rgb(102.0, 153.0, 102.0);-fx-font-size:14px;" text="Salva" />
     </HBox>
-    <TextArea fx:id="newReviewBody"/>
-    <JFXButton buttonType="FLAT"  onAction="#save" style="-fx-text-fill: WHITE; -fx-background-color: rgb(102.0, 153.0, 102.0);-fx-font-size:14px;" text="Salva" />
     <VBox.margin>
         <Insets top="10.0" bottom="10.0" left="10.0" right="10.0"/>
     </VBox.margin>

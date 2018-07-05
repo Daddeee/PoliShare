@@ -1,5 +1,6 @@
 package it.polimi.polishare.peer.controller;
 
+import com.jfoenix.controls.JFXButton;
 import it.polimi.polishare.common.DHT.DHTException;
 import it.polimi.polishare.common.NoteMetaData;
 import it.polimi.polishare.common.ReviewMetaData;
@@ -34,6 +35,8 @@ public class AddReviewController {
     private Label wordsCount;
     @FXML
     private TextArea newReviewBody;
+    @FXML
+    private JFXButton addReviewButton;
 
     private Note note;
     private CatalogController catalogController;
@@ -55,10 +58,13 @@ public class AddReviewController {
                 }
             }
 
-            if(myReview != null)
+            if(myReview != null) {
                 newReview = myReview;
-            else
+                addReviewButton.setText("Salva");
+            } else {
                 newReview = new ReviewMetaData(note.getNoteMetaData(), CurrentSession.getCurrentUsername(), "", 0);
+                addReviewButton.setText("Modifica");
+            }
         }
 
         initNewReviewRating();
