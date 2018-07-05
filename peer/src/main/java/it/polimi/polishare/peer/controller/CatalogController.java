@@ -141,6 +141,8 @@ public class CatalogController {
                     n.setNoteMetaData(noteMetaData);
 
                     data.add(new CatalogTreeTableNoteMetaData(n));
+                } else {
+                    noteDAO.delete(n.getTitle());
                 }
             } catch (DHTException e) {
                 e.printStackTrace();
