@@ -135,10 +135,13 @@ public class CatalogController {
 
         for(Note n : myNotes) {
             try {
-                NoteMetaData noteMetaData = CurrentSession.getDHT().get(n.getTitle());
-                n.setNoteMetaData(noteMetaData);
+                File f = new File(n.getPath());
+                if(f.exists() && !f.isDirectory()) {
+                    NoteMetaData noteMetaData = CurrentSession.getDHT().get(n.getTitle());
+                    n.setNoteMetaData(noteMetaData);
 
-                data.add(new CatalogTreeTableNoteMetaData(n));
+                    data.add(new CatalogTreeTableNoteMetaData(n));
+                }
             } catch (DHTException e) {
                 e.printStackTrace();
             }
@@ -157,9 +160,8 @@ public class CatalogController {
                     File file = new File(row.getTreeItem().getValue().getNote().getPath());
                     try {
                         Desktop.getDesktop().open(file);
-                    } catch (IOException e) {
-                        //Notifications.exception((StackPane) context.getRegisteredObject("Root"), e);
-                        e.printStackTrace();
+                    } catch (Exception e) {
+                        Platform.runLater(() -> Notifications.exception((StackPane) context.getRegisteredObject("Root"), new Exception("Impossibile aprire il file.")));
                     }
                 }).start();
             });
