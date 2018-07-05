@@ -1,14 +1,12 @@
 package it.polimi.polishare.peer.utils;
 
-import it.polimi.polishare.peer.App;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
 public class DB {
-    private static String dbName =  "my.db";
+    private static String dbName =  "polishare.db";
 
     public static void setUp() throws SQLException {
         String createNotesTable = "CREATE TABLE IF NOT EXISTS notes (" +
