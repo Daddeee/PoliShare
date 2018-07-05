@@ -1,5 +1,6 @@
 package it.polimi.polishare.peer.controller;
 
+import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXListView;
 import io.datafx.controller.ViewController;
@@ -96,5 +97,8 @@ public class SideMenuController {
         Flow sideMenuFlow = new Flow(UnauthenticatedSideMenuController.class);
         final FlowHandler sideMenuFlowHandler = sideMenuFlow.createHandler(context);
         drawer.setSidePane(sideMenuFlowHandler.start(new AnimatedFlowContainer(Duration.millis(320))));
+
+        JFXButton showChatButton = (JFXButton) context.getRegisteredObject("ShowChatButton");
+        showChatButton.setDisable(true);
     }
 }
