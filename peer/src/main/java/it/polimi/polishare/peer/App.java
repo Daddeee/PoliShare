@@ -16,6 +16,7 @@ import it.polimi.polishare.peer.network.DownloaderImpl;
 import it.polimi.polishare.peer.utils.CurrentSession;
 import it.polimi.polishare.peer.utils.DB;
 import it.polimi.polishare.peer.utils.Notifications;
+import it.polimi.polishare.peer.utils.Settings;
 import javafx.application.Application;
 import javafx.collections.ObservableList;
 import javafx.geometry.Rectangle2D;
@@ -33,20 +34,18 @@ import java.sql.SQLException;
 public class App  extends Application {
     public static SessionFactory sf;
     public static Downloader dw;
-    public static final String SERVER_IP = "localhost";
-    private static final String MY_IP = "localhost";
 
     @FXMLViewFlowContext
     private ViewFlowContext flowContext;
 
     public static void main( String[] args ) {
-        System.setProperty("java.rmi.server.hostname", MY_IP);
+        System.setProperty("java.rmi.server.hostname", Settings.getProperty("my_ip"));
 
         try {
             DB.setUp();
             dw = new DownloaderImpl();
 
-            Registry registry = LocateRegistry.getRegistry(SERVER_IP);
+            Registry registry = LocateRegistry.getRegistry(Settings.getProperty("server_ip"));
             sf = (SessionFactory) registry.lookup("session_factory");
         } catch (SQLException | RemoteException | NotBoundException e) {
             e.printStackTrace();

@@ -20,6 +20,7 @@ import it.polimi.polishare.peer.network.DHT.DHTImpl;
 import it.polimi.polishare.peer.network.server.ReverseSessionImpl;
 import it.polimi.polishare.peer.utils.CurrentSession;
 import it.polimi.polishare.peer.utils.Notifications;
+import it.polimi.polishare.peer.utils.Settings;
 import javafx.fxml.FXML;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
@@ -64,7 +65,7 @@ public class LoginController {
             CurrentSession.setUsername(username.getText());
             CurrentSession.setReverseSession(new ReverseSessionImpl());
             CurrentSession.setDHT(new DHTImpl<>(username.getText(), NoteMetaData.class));
-            CurrentSession.getDHT().join(App.SERVER_IP, CurrentSession.getSession().getServerDHTName());
+            CurrentSession.getDHT().join(Settings.getProperty("server_ip"), CurrentSession.getSession().getServerDHTName());
             CurrentSession.getSession().setReverseSession(CurrentSession.getReverseSession());
 
             switchToAuthenticatedUI();
