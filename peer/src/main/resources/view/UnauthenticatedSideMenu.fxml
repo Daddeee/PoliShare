@@ -12,6 +12,6 @@
         <Label fx:id="login">Accedi</Label>
         <Label fx:id="register">Registrati</Label>
         <Label fx:id="search">Ricerca appunti</Label>
-        <Label fx:id="about">Aiuto</Label>
+        <Label fx:id="about">Benvenuto</Label>
     </JFXListView>
 </StackPane>

@@ -59,7 +59,7 @@ public class MainController {
         });
 
         context = new ViewFlowContext();
-        Flow innerFlow = new Flow(UnauthenticatedSearchController.class);
+        Flow innerFlow = new Flow(WelcomeController.class);
         final FlowHandler flowHandler = innerFlow.createHandler(context);
         drawer.setContent(flowHandler.start(new AnimatedFlowContainer(Duration.millis(320))));
 

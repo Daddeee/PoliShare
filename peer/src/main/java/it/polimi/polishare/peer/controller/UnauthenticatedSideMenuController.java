@@ -60,7 +60,7 @@ public class UnauthenticatedSideMenuController {
         bindNodeToController(login, LoginController.class, contentFlow);
         bindNodeToController(register, RegisterController.class, contentFlow);
         bindNodeToController(search, UnauthenticatedSearchController.class, contentFlow);
-        bindNodeToController(about, AboutController.class, contentFlow);
+        bindNodeToController(about, WelcomeController.class, contentFlow);
     }
 
     private void bindNodeToController(Node node, Class<?> controllerClass, Flow flow) {

@@ -81,7 +81,7 @@ public class App  extends Application {
     }
 
     private Scene setUpFirstScene(Stage stage, DefaultFlowContainer container) {
-        JFXDecorator decorator = new JFXDecorator(stage, container.getView());
+        JFXDecorator decorator = new JFXDecorator(stage, container.getView(), false, true, true);
         decorator.setCustomMaximize(true);
 
         double width = 800;

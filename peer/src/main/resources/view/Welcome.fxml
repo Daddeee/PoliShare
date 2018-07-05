@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.geometry.Insets?>
+<StackPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:id="root">
+    <children>
+        <VBox alignment="CENTER" spacing="25.0">
+            <Label alignment="CENTER" style="-fx-text-fill: #404040; -fx-font-size: 40; -fx-font-family: Roboto; -fx-font-weight: BOLD;" wrapText="true">Benvenuto!</Label>
+            <Label maxWidth="400.0" textAlignment="JUSTIFY" fx:id="text" wrapText="true" style="-fx-text-fill: #404040; -fx-font-size: 20; -fx-font-family: Roboto"/>
+        </VBox>
+    </children>
+</StackPane>

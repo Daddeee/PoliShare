@@ -92,7 +92,7 @@ public class SideMenuController {
 
     private void switchToUnauthenticatedUI() throws FlowException {
         JFXDrawer drawer = (JFXDrawer) context.getRegisteredObject("Drawer");
-        Flow innerFlow = new Flow(UnauthenticatedSearchController.class);
+        Flow innerFlow = new Flow(WelcomeController.class);
         final FlowHandler flowHandler = innerFlow.createHandler(context);
         drawer.setContent(flowHandler.start(new AnimatedFlowContainer(Duration.millis(320))));
 
