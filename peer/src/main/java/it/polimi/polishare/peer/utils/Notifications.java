@@ -3,11 +3,18 @@ package it.polimi.polishare.peer.utils;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXDialogLayout;
+import io.datafx.controller.flow.context.ViewFlowContext;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 
 public class Notifications {
-    public static void exception(StackPane container, Exception e) {
+    private static ViewFlowContext context;
+
+    public static void setContext(ViewFlowContext context) {
+        Notifications.context = context;
+    }
+
+    public static void exception(Exception e) {
         JFXDialog dialog = new JFXDialog();
 
         JFXButton closeButton = new JFXButton("Chiudi");
@@ -25,7 +32,7 @@ public class Notifications {
 
         dialog.setContent(layout);
         dialog.setOverlayClose(true);
-        dialog.setDialogContainer(container);
+        dialog.setDialogContainer((StackPane) context.getRegisteredObject("Root"));
         dialog.setTransitionType(JFXDialog.DialogTransition.RIGHT);
 
         layout.getStyleClass().add("error-dialog");

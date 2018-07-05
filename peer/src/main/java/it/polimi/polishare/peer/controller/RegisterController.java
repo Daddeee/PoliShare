@@ -49,7 +49,7 @@ public class RegisterController {
             email.clear();
             username.clear();
         } catch (RegistrationFailedException e) {
-            Notifications.exception((StackPane) context.getRegisteredObject("Root"), e);
+            Notifications.exception(e);
             e.printStackTrace();
         } catch (RemoteException e) {
             e.printStackTrace();

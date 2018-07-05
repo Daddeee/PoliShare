@@ -8,6 +8,7 @@ import io.datafx.controller.flow.FlowHandler;
 import io.datafx.controller.flow.container.AnimatedFlowContainer;
 import io.datafx.controller.flow.context.FXMLViewFlowContext;
 import io.datafx.controller.flow.context.ViewFlowContext;
+import it.polimi.polishare.peer.utils.Notifications;
 import javafx.animation.Transition;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -68,6 +69,8 @@ public class MainController {
         context.register("Root", root);
         context.register("Drawer", drawer);
         context.register("ShowChatButton", showChatButton);
+
+        Notifications.setContext(context);
 
         Flow sideMenuFlow = new Flow(UnauthenticatedSideMenuController.class);
         final FlowHandler sideMenuFlowHandler = sideMenuFlow.createHandler(context);

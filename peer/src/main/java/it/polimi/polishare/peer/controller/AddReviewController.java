@@ -120,7 +120,7 @@ public class AddReviewController {
         newReview.setBody(newReviewBody.getText());
 
         if(count > 500) {
-            Notifications.exception((StackPane) catalogController.context.getRegisteredObject("Root"), new Exception("Le recensioni possono avere al massimo 500 parole."));
+            Notifications.exception(new Exception("Le recensioni possono avere al massimo 500 parole."));
             return;
         }
 
@@ -130,7 +130,7 @@ public class AddReviewController {
             NoteMetaData noteMetaData = CurrentSession.getDHT().get(note.getTitle());
             catalogController.updateData(noteMetaData);
         } catch (DHTException ex){
-            Notifications.exception((StackPane) catalogController.context.getRegisteredObject("Root"), ex);
+            Notifications.exception(ex);
             ex.printStackTrace();
         }
     }

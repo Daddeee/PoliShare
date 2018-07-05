@@ -86,7 +86,7 @@ public class SideMenuController {
 
             CurrentSession.shutDown();
         } catch (FlowException | RemoteException | DHTException e) {
-            Notifications.exception((StackPane) context.getRegisteredObject("Root"), e);
+            Notifications.exception(e);
         }
     }
 

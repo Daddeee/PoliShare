@@ -133,7 +133,7 @@ public class SearchController {
 
         Note n = noteDAO.read(info.getTitle());
         if(n != null) {
-            Notifications.exception((StackPane) context.getRegisteredObject("Root"), new Exception("Possiedi già questo file."));
+            Notifications.exception(new Exception("Possiedi già questo file."));
             return;
         }
 

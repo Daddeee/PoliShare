@@ -50,7 +50,7 @@ public class ReviewsController {
 
     public void initData(Note note, double height, double width){
         this.note = note;
-        
+
         try {
             this.note.setNoteMetaData(CurrentSession.getDHT().get(note.getTitle()));
         } catch (DHTException e) {}

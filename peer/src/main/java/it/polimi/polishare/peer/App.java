@@ -15,6 +15,7 @@ import it.polimi.polishare.peer.controller.MainController;
 import it.polimi.polishare.peer.network.DownloaderImpl;
 import it.polimi.polishare.peer.utils.CurrentSession;
 import it.polimi.polishare.peer.utils.DB;
+import it.polimi.polishare.peer.utils.Notifications;
 import javafx.application.Application;
 import javafx.collections.ObservableList;
 import javafx.geometry.Rectangle2D;

@@ -69,8 +69,7 @@ public class LoginController {
 
             switchToAuthenticatedUI();
         } catch (LoginFailedException e) {
-            StackPane root = (StackPane) context.getRegisteredObject("Root");
-            Notifications.exception(root, e);
+            Notifications.exception(e);
         } catch (RemoteException | DHTException | FlowException e) {
             e.printStackTrace();
         }

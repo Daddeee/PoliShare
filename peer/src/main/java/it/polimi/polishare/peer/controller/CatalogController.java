@@ -164,7 +164,7 @@ public class CatalogController {
                     try {
                         Desktop.getDesktop().open(file);
                     } catch (Exception e) {
-                        Platform.runLater(() -> Notifications.exception((StackPane) context.getRegisteredObject("Root"), new Exception("Impossibile aprire il file.")));
+                        Platform.runLater(() -> Notifications.exception(new Exception("Impossibile aprire il file.")));
                     }
                 }).start();
             });
@@ -221,7 +221,7 @@ public class CatalogController {
                     NoteDAO noteDAO = new NoteDAO();
                     noteDAO.delete(row.getTreeItem().getValue().title.get());
                 } catch (DHTException ex) {
-                    Notifications.exception((StackPane) context.getRegisteredObject("Root"), ex);
+                    Notifications.exception(ex);
                 }
             });
 
