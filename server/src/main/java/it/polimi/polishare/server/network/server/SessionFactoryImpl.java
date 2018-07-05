@@ -33,14 +33,22 @@ public class SessionFactoryImpl extends UnicastRemoteObject implements SessionFa
     }
 
     @Override
-    public Session login(String username, String password) throws RemoteException, LoginFailedException {
+    public Session login(String username, String password) throws LoginFailedException {
         if(dao.checkLogin(username, password)) {
-            if(activeSessions.get(username) != null) //TODO PING per vedere se attiva
-                throw new LoginFailedException("Questo utente risulta già loggato nel sistema.");
+            if(activeSessions.get(username) != null) {
+                try {
+                    activeSessions.get(username).getReverseSession().ping();
+                    throw new LoginFailedException("Questo utente risulta già loggato nel sistema.");
+                } catch (RemoteException e) {}
+            }
 
-            Session newSession = new SessionImpl(username);
-            activeSessions.put(username, newSession);
-            return newSession;
+            try{
+                Session newSession = new SessionImpl(username);
+                activeSessions.put(username, newSession);
+                return newSession;
+            } catch (RemoteException e) {
+                throw new LoginFailedException("Errore di connessione.");
+            }
         } else {
             throw new LoginFailedException("Combinazione username/password non valida.");
         }
