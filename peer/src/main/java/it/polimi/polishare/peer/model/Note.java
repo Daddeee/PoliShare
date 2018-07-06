@@ -1,6 +1,6 @@
 package it.polimi.polishare.peer.model;
 
-import it.polimi.polishare.common.NoteMetaData;
+import it.polimi.polishare.common.DHT.model.NoteMetaData;
 
 public class Note {
     private NoteMetaData noteMetaData;

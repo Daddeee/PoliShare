@@ -2,7 +2,7 @@ package it.polimi.polishare.server;
 
 import it.polimi.polishare.common.DHT.DHT;
 import it.polimi.polishare.common.DHT.DHTException;
-import it.polimi.polishare.common.NoteMetaData;
+import it.polimi.polishare.common.DHT.model.NoteMetaData;
 import it.polimi.polishare.common.server.SessionFactory;
 import it.polimi.polishare.server.Utils.DB;
 import it.polimi.polishare.server.Utils.Settings;

@@ -16,7 +16,7 @@
 <?import com.jfoenix.controls.JFXDialog?>
 <?import com.jfoenix.controls.JFXDialogLayout?>
 <?import com.jfoenix.validation.RequiredFieldValidator?>
-<?import it.polimi.polishare.peer.utils.DirectoryValidator?>
+<?import it.polimi.polishare.peer.controller.validators.DirectoryValidator?>
 <?import com.jfoenix.controls.JFXSpinner?>
 <StackPane fx:id="root" xmlns="http://javafx.com/javafx/8.0.162-ea" xmlns:fx="http://javafx.com/fxml/1">
     <VBox spacing="30.0">

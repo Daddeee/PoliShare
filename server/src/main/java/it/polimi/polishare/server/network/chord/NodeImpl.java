@@ -1,8 +1,8 @@
 package it.polimi.polishare.server.network.chord;
 
-import it.polimi.polishare.common.chord.Key;
-import it.polimi.polishare.common.chord.Node;
-import it.polimi.polishare.common.chord.Operation;
+import it.polimi.polishare.common.DHT.chord.Key;
+import it.polimi.polishare.common.DHT.chord.Node;
+import it.polimi.polishare.common.DHT.chord.Operation;
 
 import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;

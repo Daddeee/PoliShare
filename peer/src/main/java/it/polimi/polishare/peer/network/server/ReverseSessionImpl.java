@@ -2,7 +2,7 @@ package it.polimi.polishare.peer.network.server;
 
 import it.polimi.polishare.common.server.Message;
 import it.polimi.polishare.common.server.ReverseSession;
-import it.polimi.polishare.peer.utils.GroupChat;
+import it.polimi.polishare.peer.GroupChat;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;

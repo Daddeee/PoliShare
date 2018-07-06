@@ -1,6 +1,8 @@
 package it.polimi.polishare.common.server;
 
-import it.polimi.polishare.common.NoteMetaData;
+import it.polimi.polishare.common.DHT.model.NoteMetaData;
+import it.polimi.polishare.common.server.exceptions.LoginFailedException;
+import it.polimi.polishare.common.server.exceptions.RegistrationFailedException;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;

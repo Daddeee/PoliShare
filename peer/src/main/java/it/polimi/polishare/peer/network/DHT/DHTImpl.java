@@ -2,10 +2,10 @@ package it.polimi.polishare.peer.network.DHT;
 
 import it.polimi.polishare.common.DHT.DHT;
 import it.polimi.polishare.common.DHT.DHTException;
-import it.polimi.polishare.common.chord.Key;
-import it.polimi.polishare.common.chord.Node;
-import it.polimi.polishare.common.chord.Operation;
-import it.polimi.polishare.peer.network.chord.NodeImpl;
+import it.polimi.polishare.common.DHT.chord.Key;
+import it.polimi.polishare.common.DHT.chord.Node;
+import it.polimi.polishare.common.DHT.chord.Operation;
+import it.polimi.polishare.peer.network.DHT.chord.NodeImpl;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;

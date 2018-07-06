@@ -4,12 +4,11 @@ import com.jfoenix.controls.JFXTextField;
 import io.datafx.controller.ViewController;
 import io.datafx.controller.flow.context.FXMLViewFlowContext;
 import io.datafx.controller.flow.context.ViewFlowContext;
-import it.polimi.polishare.common.server.RegistrationFailedException;
+import it.polimi.polishare.common.server.exceptions.RegistrationFailedException;
 import it.polimi.polishare.peer.App;
 import it.polimi.polishare.peer.utils.Notifications;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.layout.StackPane;
 
 import javax.annotation.PostConstruct;
 import java.rmi.RemoteException;

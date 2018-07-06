@@ -1,6 +1,6 @@
 package it.polimi.polishare.common.DHT;
 
-import it.polimi.polishare.common.chord.Operation;
+import it.polimi.polishare.common.DHT.chord.Operation;
 
 import java.util.List;
 import java.util.function.Predicate;

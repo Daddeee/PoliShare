@@ -13,19 +13,16 @@ import io.datafx.controller.flow.context.FXMLViewFlowContext;
 import io.datafx.controller.flow.context.ViewFlowContext;
 import io.datafx.controller.util.VetoException;
 import it.polimi.polishare.common.DHT.DHTException;
-import it.polimi.polishare.common.Downloader;
-import it.polimi.polishare.peer.utils.CurrentSession;
+import it.polimi.polishare.peer.CurrentSession;
 import it.polimi.polishare.peer.utils.Notifications;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 
 import javax.annotation.PostConstruct;
 import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
 import java.util.Objects;
 
 @ViewController(value = "/view/SideMenu.fxml")

@@ -2,18 +2,17 @@ package it.polimi.polishare.peer.controller;
 
 import com.jfoenix.controls.JFXButton;
 import it.polimi.polishare.common.DHT.DHTException;
-import it.polimi.polishare.common.NoteMetaData;
-import it.polimi.polishare.common.ReviewMetaData;
+import it.polimi.polishare.common.DHT.model.NoteMetaData;
+import it.polimi.polishare.common.DHT.model.ReviewMetaData;
 import it.polimi.polishare.peer.model.Note;
-import it.polimi.polishare.common.UpdateReviewOperation;
-import it.polimi.polishare.peer.utils.CurrentSession;
+import it.polimi.polishare.common.DHT.operations.UpdateReviewOperation;
+import it.polimi.polishare.peer.CurrentSession;
 import it.polimi.polishare.peer.utils.Notifications;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 import java.util.Arrays;

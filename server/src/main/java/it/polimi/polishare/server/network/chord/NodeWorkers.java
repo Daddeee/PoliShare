@@ -1,6 +1,6 @@
 package it.polimi.polishare.server.network.chord;
 
-import it.polimi.polishare.common.chord.Node;
+import it.polimi.polishare.common.DHT.chord.Node;
 
 public class NodeWorkers {
     private static final int PERIODIC_STABILIZATION_DELAY = 1000;
