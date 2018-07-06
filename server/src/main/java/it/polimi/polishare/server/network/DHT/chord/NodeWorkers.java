@@ -1,4 +1,4 @@
-package it.polimi.polishare.server.network.chord;
+package it.polimi.polishare.server.network.DHT.chord;
 
 import it.polimi.polishare.common.DHT.chord.Node;
 

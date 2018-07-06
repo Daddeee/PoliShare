@@ -5,7 +5,7 @@ import it.polimi.polishare.common.DHT.DHTException;
 import it.polimi.polishare.common.DHT.chord.Key;
 import it.polimi.polishare.common.DHT.chord.Node;
 import it.polimi.polishare.common.DHT.chord.Operation;
-import it.polimi.polishare.server.network.chord.NodeImpl;
+import it.polimi.polishare.server.network.DHT.chord.NodeImpl;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
