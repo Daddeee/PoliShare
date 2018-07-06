@@ -1,7 +1,7 @@
 package it.polimi.polishare.server.model;
 
 import it.polimi.polishare.common.AddFailedException;
-import it.polimi.polishare.server.Utils.DB;
+import it.polimi.polishare.server.utils.DB;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

@@ -4,8 +4,8 @@ import it.polimi.polishare.common.DHT.DHT;
 import it.polimi.polishare.common.DHT.DHTException;
 import it.polimi.polishare.common.DHT.model.NoteMetaData;
 import it.polimi.polishare.common.server.SessionFactory;
-import it.polimi.polishare.server.Utils.DB;
-import it.polimi.polishare.server.Utils.Settings;
+import it.polimi.polishare.server.utils.DB;
+import it.polimi.polishare.server.utils.Settings;
 import it.polimi.polishare.server.network.DHT.DHTImpl;
 import it.polimi.polishare.server.network.server.SessionFactoryImpl;
 

@@ -1,4 +1,4 @@
-package it.polimi.polishare.server.Utils;
+package it.polimi.polishare.server.utils;
 
 import java.security.SecureRandom;
 import java.util.Locale;

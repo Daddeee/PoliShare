@@ -9,8 +9,8 @@ import it.polimi.polishare.common.server.exceptions.RegistrationFailedException;
 import it.polimi.polishare.common.server.Session;
 import it.polimi.polishare.common.server.SessionFactory;
 import it.polimi.polishare.server.App;
-import it.polimi.polishare.server.Utils.Mailer;
-import it.polimi.polishare.server.Utils.RandomString;
+import it.polimi.polishare.server.utils.Mailer;
+import it.polimi.polishare.server.utils.RandomString;
 import it.polimi.polishare.server.model.UserDAO;
 
 import javax.mail.MessagingException;
