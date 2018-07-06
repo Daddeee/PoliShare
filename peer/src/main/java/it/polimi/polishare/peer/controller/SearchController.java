@@ -18,9 +18,7 @@ import it.polimi.polishare.common.AddFailedException;
 import it.polimi.polishare.peer.utils.CurrentSession;
 import it.polimi.polishare.peer.utils.DownloadManager;
 import it.polimi.polishare.peer.utils.Notifications;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -81,6 +79,10 @@ public class SearchController {
     private JFXDialog downloadDialog;
     @FXML
     private JFXTextField path;
+    @FXML
+    private JFXSpinner searchSpinner;
+
+    private BooleanProperty isSearching = new SimpleBooleanProperty(false);
 
     public ObservableList<SearchTreeTableNoteMetaData> data = FXCollections.observableArrayList();
 
@@ -89,24 +91,27 @@ public class SearchController {
         if(!yearField.validate()) return;
         if(rating.getSelectionModel().getSelectedItem() == null) rating.getSelectionModel().selectFirst();
 
-        List<NoteMetaData> notes = new ArrayList<>();
-        try{
-            NoteMetaDataQueryGenerator generator = new NoteMetaDataQueryGenerator();
-            Predicate<NoteMetaData> queryPredicate = generator.getPredicate(
-                    titleField.getText(),
-                    authorField.getText(),
-                    subjectField.getText(),
-                    teacherField.getText(),
-                    yearField.getText(),
-                    rating.getSelectionModel().getSelectedItem()
-            );
+        NoteMetaDataQueryGenerator generator = new NoteMetaDataQueryGenerator();
+        Predicate<NoteMetaData> queryPredicate = generator.getPredicate(
+                titleField.getText(),
+                authorField.getText(),
+                subjectField.getText(),
+                teacherField.getText(),
+                yearField.getText(),
+                rating.getSelectionModel().getSelectedItem()
+        );
 
-            notes = CurrentSession.getDHT().query(queryPredicate);
-        } catch (DHTException e) {
-            e.printStackTrace();
-        }
+        isSearching.setValue(true);
+        new Thread(() -> {
+            try{
+                List<NoteMetaData>  notes = CurrentSession.getDHT().query(queryPredicate);
+                isSearching.setValue(false);
+                updateTableData(notes);
+            } catch (DHTException e) {
+                e.printStackTrace();
+            }
+        }).start();
 
-        updateTableData(notes);
     }
 
     @FXML
@@ -147,6 +152,7 @@ public class SearchController {
     @PostConstruct
     public void init() {
         setupCatalogTableView();
+        searchSpinner.visibleProperty().bind(isSearching);
 
         ObservableList<Integer> ratingsValue = FXCollections.observableArrayList();
         ratingsValue.addAll(0, 1, 2, 3, 4, 5);
