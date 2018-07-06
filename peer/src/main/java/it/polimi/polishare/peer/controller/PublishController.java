@@ -12,12 +12,14 @@ import it.polimi.polishare.peer.model.NoteDAO;
 import it.polimi.polishare.common.AddFailedException;
 import it.polimi.polishare.peer.CurrentSession;
 import it.polimi.polishare.peer.utils.Notifications;
+import it.polimi.polishare.peer.utils.ThreadPool;
 import javafx.fxml.FXML;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @ViewController(value = "/view/Publish.fxml")
 public class PublishController {
@@ -93,13 +95,17 @@ public class PublishController {
         if(!(title.validate() && author.validate() && subject.validate() && teacher.validate() && year.validate() && path.validate()))
             return;
 
-        try {
-            NoteMetaData fetch = CurrentSession.getDHT().get(title.getText());
-            if(fetch != null) {
-                Notifications.exception(new Exception("Un file con il titolo selezionato è già presente nel sistema."));
-                return;
-            }
-        } catch (DHTException e) {}
+        AtomicBoolean fetchSuccessfull = new AtomicBoolean(false);
+        ThreadPool.getInstance().execute(() -> {
+            try {
+                NoteMetaData fetch = CurrentSession.getDHT().get(title.getText());
+                if(fetch != null) {
+                    Notifications.exception(new Exception("Un file con il titolo selezionato è già presente nel sistema."));
+                    fetchSuccessfull.set(true);
+                }
+            } catch (DHTException e) {}
+        });
+        if(fetchSuccessfull.get()) return;
 
         NoteDAO noteDAO = new NoteDAO();
 
@@ -108,18 +114,27 @@ public class PublishController {
         Note newNote = new Note(title.getText(), path.getText());
         newNote.setNoteMetaData(newNoteMetaData);
 
-        try {
-            CurrentSession.getDHT().put(newNoteMetaData.getTitle(), newNoteMetaData);
-            noteDAO.create(newNote);
+        AtomicBoolean publishSuccessfull = new AtomicBoolean(false);
+        ThreadPool.getInstance().execute(() -> {
+            try {
+                CurrentSession.getDHT().put(newNoteMetaData.getTitle(), newNoteMetaData);
+                noteDAO.create(newNote);
 
+                publishSuccessfull.set(true);
+            } catch (DHTException | AddFailedException e) {
+                Notifications.exception(e);
+                e.printStackTrace();
+            }
+        });
+
+        if(publishSuccessfull.get()) {
+            Notifications.confirmation("Appunto pubblicato correttamente");
             title.clear();
             author.clear();
             subject.clear();
             teacher.clear();
             year.clear();
             path.clear();
-        } catch (DHTException | AddFailedException e) {
-            e.printStackTrace();
         }
     }
 }
