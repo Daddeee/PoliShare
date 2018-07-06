@@ -1,8 +1,6 @@
 package it.polimi.polishare.peer.utils;
 
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 public class FixedSizeQueue<T extends Object> {
     private LinkedHashMap<Integer, T> queue;
@@ -22,7 +20,7 @@ public class FixedSizeQueue<T extends Object> {
         queue.put(e.hashCode(), e);
     }
 
-    public Collection<T> getAll() {
-        return queue.values();
+    public List<T> getAll() {
+        return new ArrayList<>(queue.values());
     }
 }
