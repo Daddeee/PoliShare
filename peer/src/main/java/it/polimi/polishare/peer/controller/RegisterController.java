@@ -54,18 +54,6 @@ public class RegisterController {
             } catch (RemoteException | RegistrationFailedException e) {
                 Platform.runLater(() -> Notifications.exception(e));
             }
-        });
-
-        try {
-            App.sf.register(email.getText(), username.getText());
-
-            email.clear();
-            username.clear();
-        } catch (RegistrationFailedException e) {
-            Notifications.exception(e);
-            e.printStackTrace();
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
+        }).start();
     }
 }
