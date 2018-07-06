@@ -8,6 +8,7 @@ import it.polimi.polishare.peer.model.Note;
 import it.polimi.polishare.common.DHT.operations.UpdateReviewOperation;
 import it.polimi.polishare.peer.CurrentSession;
 import it.polimi.polishare.peer.utils.Notifications;
+import it.polimi.polishare.peer.utils.ThreadPool;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -16,6 +17,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
 
 import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class AddReviewController {
     @FXML
@@ -47,6 +49,30 @@ public class AddReviewController {
         this.note = note;
         this.catalogController = catalogController;
 
+        setSavingOrModifying(note);
+        initNewReviewRating();
+
+        newReviewBody.setWrapText(true);
+        newReviewBody.setText(newReview.getBody());
+
+        count = Arrays.stream(newReview.getBody().split("[ \t\n]")).count();
+        wordsCount.setText(Long.toString(count));
+        initWordsCount();
+
+        setSize(height, width);
+    }
+
+    private void setSize(double height, double width) {
+        main.setPrefHeight(height);
+        main.setMaxHeight(height);
+        main.setMinHeight(height);
+
+        main.setPrefWidth(width);
+        main.setMaxWidth(width);
+        main.setMinWidth(width);
+    }
+
+    private void setSavingOrModifying(Note note) {
         if(newReview == null || !newReview.getNoteMetaData().equals(note.getNoteMetaData())) {
             ReviewMetaData myReview = null;
 
@@ -65,23 +91,6 @@ public class AddReviewController {
                 addReviewButton.setText("Salva");
             }
         }
-
-        initNewReviewRating();
-        newReviewBody.setWrapText(true);
-        newReviewBody.setText(newReview.getBody());
-
-        count = Arrays.stream(newReview.getBody().split("[ \t\n]")).count();
-        wordsCount.setText(Long.toString(count));
-
-        main.setPrefHeight(height);
-        main.setMaxHeight(height);
-        main.setMinHeight(height);
-
-        main.setPrefWidth(width);
-        main.setMaxWidth(width);
-        main.setMinWidth(width);
-
-        initWordsCount();
     }
 
     @FXML
@@ -123,17 +132,21 @@ public class AddReviewController {
             return;
         }
 
-        try{
-            CurrentSession.getDHT().exec(note.getTitle(), new UpdateReviewOperation(newReview));
+        AtomicBoolean succesfull = new AtomicBoolean(false);
+        ThreadPool.getInstance().execute(() -> {
+            try{
+                CurrentSession.getDHT().exec(note.getTitle(), new UpdateReviewOperation(newReview));
+                NoteMetaData noteMetaData = CurrentSession.getDHT().get(note.getTitle());
+                catalogController.updateData(noteMetaData);
+                succesfull.set(false);
+            } catch (DHTException ex){
+                Notifications.exception(ex);
+            }
+        });
 
-            NoteMetaData noteMetaData = CurrentSession.getDHT().get(note.getTitle());
-            catalogController.updateData(noteMetaData);
-            catalogController.getPopup().hide();
+        catalogController.getPopup().hide();
+        if(succesfull.get())
             Notifications.confirmation("Recensione aggiunta con successo.");
-        } catch (DHTException ex){
-            Notifications.exception(ex);
-            ex.printStackTrace();
-        }
     }
 
     private void initNewReviewRating(){
