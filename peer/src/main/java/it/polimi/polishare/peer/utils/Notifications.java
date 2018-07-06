@@ -61,7 +61,7 @@ public class Notifications {
         dialog.setDialogContainer((StackPane) context.getRegisteredObject("Root"));
         dialog.setTransitionType(JFXDialog.DialogTransition.RIGHT);
 
-        layout.setStyle("-fx-background-color: rgba(244.0, 66.0, 66.0, 1.0);");
+        layout.setStyle("-fx-background-color: rgba(66.0, 244.0, 66.0, 1.0);");
         dialog.show();
     }
 }
