@@ -7,6 +7,7 @@ import io.datafx.controller.flow.context.ViewFlowContext;
 import it.polimi.polishare.common.server.RegistrationFailedException;
 import it.polimi.polishare.peer.App;
 import it.polimi.polishare.peer.utils.Notifications;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.layout.StackPane;
 
@@ -42,6 +43,18 @@ public class RegisterController {
     private void register() {
         if(!(username.validate() && email.validate()))
             return;
+
+        new Thread(() -> {
+            try {
+                App.sf.register(email.getText(), username.getText());
+
+                email.clear();
+                username.clear();
+                Platform.runLater(() -> Notifications.confirmation("Registrazione avvenuta con successo"));
+            } catch (RemoteException | RegistrationFailedException e) {
+                Platform.runLater(() -> Notifications.exception(e));
+            }
+        });
 
         try {
             App.sf.register(email.getText(), username.getText());

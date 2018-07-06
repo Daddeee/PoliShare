@@ -39,4 +39,29 @@ public class Notifications {
 
         dialog.show();
     }
+
+    public static void confirmation(String msg) {
+        JFXDialog dialog = new JFXDialog();
+
+        JFXButton closeButton = new JFXButton("Chiudi");
+        closeButton.setOnAction(action -> dialog.close());
+        closeButton.setStyle("-fx-text-fill: rgba(255.0, 255.0, 255.0, 1.0)");
+
+        JFXDialogLayout layout = new JFXDialogLayout();
+        Label headLabel = new Label("Ok");
+        Label bodyLabel = new Label(msg);
+        headLabel.setStyle("-fx-text-fill: rgba(255.0, 255.0, 255.0, 1.0)");
+        bodyLabel.setStyle("-fx-text-fill: rgba(255.0, 255.0, 255.0, 1.0)");
+        layout.setHeading(headLabel);
+        layout.setBody(bodyLabel);
+        layout.setActions(closeButton);
+
+        dialog.setContent(layout);
+        dialog.setOverlayClose(true);
+        dialog.setDialogContainer((StackPane) context.getRegisteredObject("Root"));
+        dialog.setTransitionType(JFXDialog.DialogTransition.RIGHT);
+
+        layout.setStyle("-fx-background-color: rgba(244.0, 66.0, 66.0, 1.0);");
+        dialog.show();
+    }
 }
