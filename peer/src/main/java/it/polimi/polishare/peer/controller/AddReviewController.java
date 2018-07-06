@@ -129,6 +129,8 @@ public class AddReviewController {
 
             NoteMetaData noteMetaData = CurrentSession.getDHT().get(note.getTitle());
             catalogController.updateData(noteMetaData);
+            catalogController.getPopup().hide();
+            Notifications.confirmation("Recensione aggiunta con successo.");
         } catch (DHTException ex){
             Notifications.exception(ex);
             ex.printStackTrace();

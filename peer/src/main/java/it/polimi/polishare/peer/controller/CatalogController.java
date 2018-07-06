@@ -235,6 +235,10 @@ public class CatalogController {
         });
     }
 
+    public JFXPopup getPopup() {
+        return popup;
+    }
+
     private class CatalogTreeTableNoteMetaData extends RecursiveTreeObject<CatalogController.CatalogTreeTableNoteMetaData> {
         final StringProperty title;
         final StringProperty subject;
