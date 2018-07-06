@@ -1,4 +1,4 @@
-package it.polimi.polishare.server.Utils;
+package it.polimi.polishare.server.utils;
 
 
 import javax.mail.*;
@@ -7,11 +7,11 @@ import javax.mail.internet.MimeMessage;
 import java.util.Properties;
 
 public class Mailer {
-    private static final Properties props = new Properties();
     private static final String myMail = "polishare@outlook.com";
     private static final String myPass = "s3cur3p4ss";
 
-    private static final Authenticator auth = new Authenticator() {
+    private static Properties props = new Properties();
+    private static Authenticator auth = new Authenticator() {
         @Override
         protected PasswordAuthentication getPasswordAuthentication() {
             return new PasswordAuthentication(myMail, myPass);
@@ -23,6 +23,14 @@ public class Mailer {
         props.put("mail.smtp.port", "587");
         props.put("mail.smtp.starttls.enable","true");
         props.put("mail.smtp.auth", "true");
+    }
+
+    public static void setProps(Properties props) {
+        Mailer.props = props;
+    }
+
+    public static void setAuth(Authenticator auth) {
+        Mailer.auth = auth;
     }
 
     public static void sendCredentials(String username, String password, String mail) throws MessagingException {
