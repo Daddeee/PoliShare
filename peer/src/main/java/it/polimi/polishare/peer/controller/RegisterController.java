@@ -7,6 +7,7 @@ import io.datafx.controller.flow.context.ViewFlowContext;
 import it.polimi.polishare.common.server.exceptions.RegistrationFailedException;
 import it.polimi.polishare.peer.App;
 import it.polimi.polishare.peer.utils.Notifications;
+import it.polimi.polishare.peer.utils.ThreadPool;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 
@@ -43,7 +44,7 @@ public class RegisterController {
         if(!(username.validate() && email.validate()))
             return;
 
-        new Thread(() -> {
+        ThreadPool.getInstance().execute(() -> {
             try {
                 App.sf.register(email.getText(), username.getText());
 
@@ -53,6 +54,6 @@ public class RegisterController {
             } catch (RemoteException | RegistrationFailedException e) {
                 Platform.runLater(() -> Notifications.exception(e));
             }
-        }).start();
+        });
     }
 }

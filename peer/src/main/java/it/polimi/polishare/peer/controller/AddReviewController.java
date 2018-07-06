@@ -9,6 +9,7 @@ import it.polimi.polishare.common.DHT.operations.UpdateReviewOperation;
 import it.polimi.polishare.peer.CurrentSession;
 import it.polimi.polishare.peer.utils.Notifications;
 import it.polimi.polishare.peer.utils.ThreadPool;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -132,21 +133,18 @@ public class AddReviewController {
             return;
         }
 
-        AtomicBoolean succesfull = new AtomicBoolean(false);
         ThreadPool.getInstance().execute(() -> {
             try{
                 CurrentSession.getDHT().exec(note.getTitle(), new UpdateReviewOperation(newReview));
                 NoteMetaData noteMetaData = CurrentSession.getDHT().get(note.getTitle());
                 catalogController.updateData(noteMetaData);
-                succesfull.set(false);
+                catalogController.getPopup().hide();
+                Platform.runLater(() -> Notifications.confirmation("Recensione aggiunta con successo."));
             } catch (DHTException ex){
-                Notifications.exception(ex);
+                Platform.runLater(() -> Notifications.exception(ex));
             }
         });
 
-        catalogController.getPopup().hide();
-        if(succesfull.get())
-            Notifications.confirmation("Recensione aggiunta con successo.");
     }
 
     private void initNewReviewRating(){

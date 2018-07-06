@@ -22,6 +22,7 @@ import it.polimi.polishare.peer.CurrentSession;
 import it.polimi.polishare.peer.utils.Notifications;
 import it.polimi.polishare.peer.utils.Settings;
 import it.polimi.polishare.peer.utils.ThreadPool;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.util.Duration;
 
@@ -59,8 +60,6 @@ public class LoginController {
         if(!(username.validate() && password.validate()))
             return;
 
-        AtomicBoolean successfull = new AtomicBoolean(false);
-
         ThreadPool.getInstance().execute(() -> {
             try {
                 Session session = App.sf.login(username.getText(), password.getText());
@@ -72,20 +71,19 @@ public class LoginController {
                 CurrentSession.getDHT().join(Settings.getProperty("server_ip"), CurrentSession.getSession().getServerDHTName());
                 CurrentSession.getSession().setReverseSession(CurrentSession.getReverseSession());
 
-                successfull.set(true);
+                Platform.runLater(() -> {
+                    try {
+                        switchToAuthenticatedUI();
+                    } catch (FlowException e) {
+                        e.printStackTrace();
+                    }
+                });
             } catch (LoginFailedException e) {
-                Notifications.exception(e);
+                Platform.runLater(() -> Notifications.exception(e));
             } catch (RemoteException | DHTException e) {
                 e.printStackTrace();
             }
         });
-
-        try{
-            if(successfull.get())
-                switchToAuthenticatedUI();
-        } catch (FlowException e) {
-            e.printStackTrace();
-        }
     }
 
     private void switchToAuthenticatedUI() throws FlowException {

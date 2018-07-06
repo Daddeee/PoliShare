@@ -14,6 +14,7 @@ import it.polimi.polishare.peer.CurrentSession;
 import it.polimi.polishare.peer.network.download.DownloadManager;
 import it.polimi.polishare.peer.utils.Notifications;
 import it.polimi.polishare.peer.utils.ThreadPool;
+import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -98,7 +99,7 @@ public class SearchController {
                 isSearching.setValue(false);
                 updateTableData(notes);
             } catch (DHTException e) {
-                Notifications.exception(e);
+                Platform.runLater(() -> Notifications.exception(e));
             }
         });
 

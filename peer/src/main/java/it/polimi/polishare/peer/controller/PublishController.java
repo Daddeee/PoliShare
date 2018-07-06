@@ -13,6 +13,7 @@ import it.polimi.polishare.common.AddFailedException;
 import it.polimi.polishare.peer.CurrentSession;
 import it.polimi.polishare.peer.utils.Notifications;
 import it.polimi.polishare.peer.utils.ThreadPool;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -114,27 +115,24 @@ public class PublishController {
         Note newNote = new Note(title.getText(), path.getText());
         newNote.setNoteMetaData(newNoteMetaData);
 
-        AtomicBoolean publishSuccessfull = new AtomicBoolean(false);
         ThreadPool.getInstance().execute(() -> {
             try {
                 CurrentSession.getDHT().put(newNoteMetaData.getTitle(), newNoteMetaData);
                 noteDAO.create(newNote);
 
-                publishSuccessfull.set(true);
+                Platform.runLater(() -> {
+                    Notifications.confirmation("Appunto pubblicato correttamente");
+                    title.clear();
+                    author.clear();
+                    subject.clear();
+                    teacher.clear();
+                    year.clear();
+                    path.clear();
+                });
             } catch (DHTException | AddFailedException e) {
-                Notifications.exception(e);
+                Platform.runLater(() -> Notifications.exception(e));
                 e.printStackTrace();
             }
         });
-
-        if(publishSuccessfull.get()) {
-            Notifications.confirmation("Appunto pubblicato correttamente");
-            title.clear();
-            author.clear();
-            subject.clear();
-            teacher.clear();
-            year.clear();
-            path.clear();
-        }
     }
 }

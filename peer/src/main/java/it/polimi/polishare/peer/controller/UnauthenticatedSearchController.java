@@ -5,12 +5,15 @@ import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 import io.datafx.controller.ViewController;
 import io.datafx.controller.flow.context.FXMLViewFlowContext;
 import io.datafx.controller.flow.context.ViewFlowContext;
+import it.polimi.polishare.common.DHT.DHTException;
 import it.polimi.polishare.common.DHT.model.NoteMetaData;
 import it.polimi.polishare.common.DHT.model.NoteMetaDataQueryGenerator;
 import it.polimi.polishare.peer.App;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import it.polimi.polishare.peer.CurrentSession;
+import it.polimi.polishare.peer.utils.Notifications;
+import it.polimi.polishare.peer.utils.ThreadPool;
+import javafx.application.Platform;
+import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -62,6 +65,10 @@ public class UnauthenticatedSearchController {
     private HBox filterBox;
     @FXML
     private JFXButton downloadButton;
+    @FXML
+    private JFXSpinner searchSpinner;
+
+    private BooleanProperty isSearching = new SimpleBooleanProperty(false);
 
     public ObservableList<SearchTreeTableNoteMetaData> data = FXCollections.observableArrayList();
 
@@ -70,24 +77,26 @@ public class UnauthenticatedSearchController {
         if(!yearField.validate()) return;
         if(rating.getSelectionModel().getSelectedItem() == null) rating.getSelectionModel().selectFirst();
 
-        List<NoteMetaData> notes = new ArrayList<>();
-        try{
-            NoteMetaDataQueryGenerator generator = new NoteMetaDataQueryGenerator();
-            Predicate<NoteMetaData> queryPredicate = generator.getPredicate(
-                    titleField.getText(),
-                    authorField.getText(),
-                    subjectField.getText(),
-                    teacherField.getText(),
-                    yearField.getText(),
-                    rating.getSelectionModel().getSelectedItem()
-            );
+        NoteMetaDataQueryGenerator generator = new NoteMetaDataQueryGenerator();
+        Predicate<NoteMetaData> queryPredicate = generator.getPredicate(
+                titleField.getText(),
+                authorField.getText(),
+                subjectField.getText(),
+                teacherField.getText(),
+                yearField.getText(),
+                rating.getSelectionModel().getSelectedItem()
+        );
 
-            notes = App.sf.query(queryPredicate);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-
-        updateTableData(notes);
+        isSearching.setValue(true);
+        ThreadPool.getInstance().execute(() -> {
+            try{
+                List<NoteMetaData>  notes = CurrentSession.getDHT().query(queryPredicate);
+                isSearching.setValue(false);
+                updateTableData(notes);
+            } catch (DHTException e) {
+                Platform.runLater(() -> Notifications.exception(e));
+            }
+        });
     }
 
     @FXML
@@ -113,6 +122,7 @@ public class UnauthenticatedSearchController {
     public void init() {
         downloadButton.setVisible(false);
         setupCatalogTableView();
+        searchSpinner.visibleProperty().bind(isSearching);
 
         ObservableList<Integer> ratingsValue = FXCollections.observableArrayList();
         ratingsValue.addAll(0, 1, 2, 3, 4, 5);

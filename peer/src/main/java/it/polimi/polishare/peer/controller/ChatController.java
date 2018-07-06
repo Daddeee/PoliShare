@@ -5,6 +5,7 @@ import it.polimi.polishare.peer.CurrentSession;
 import it.polimi.polishare.peer.GroupChat;
 import it.polimi.polishare.peer.utils.Notifications;
 import it.polimi.polishare.peer.utils.ThreadPool;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
@@ -68,7 +69,7 @@ public class ChatController {
                 CurrentSession.getSession().sendMessage(new Message(CurrentSession.getCurrentUsername(), messageField.getText()));
                 messageField.clear();
             } catch (RemoteException e) {
-                Notifications.exception(e);
+                Platform.runLater(() -> Notifications.exception(e));
             }
         });
     }
