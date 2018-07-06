@@ -65,6 +65,8 @@ public class CatalogController {
     private JFXTreeTableColumn<CatalogTreeTableNoteMetaData, Integer> yearColumn;
     @FXML
     private JFXButton closeButton;
+    @FXML
+    private JFXTextField searchField;
 
     private JFXPopup popup;
     private ObservableList<CatalogTreeTableNoteMetaData> data;
@@ -105,6 +107,7 @@ public class CatalogController {
         catalogTreeTableView.setRoot(new RecursiveTreeItem<>(data, RecursiveTreeObject::getChildren));
 
         catalogTreeTableView.setShowRoot(false);
+        searchField.textProperty().addListener(setupSearchField(catalogTreeTableView));
     }
 
     private <T> void setupCellValueFactory(JFXTreeTableColumn<CatalogTreeTableNoteMetaData, T> column, Function<CatalogTreeTableNoteMetaData, ObservableValue<T>> mapper) {
