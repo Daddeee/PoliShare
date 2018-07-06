@@ -13,6 +13,7 @@ import it.polimi.polishare.peer.model.NoteDAO;
 import it.polimi.polishare.peer.CurrentSession;
 import it.polimi.polishare.peer.network.download.DownloadManager;
 import it.polimi.polishare.peer.utils.Notifications;
+import it.polimi.polishare.peer.utils.ThreadPool;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -91,15 +92,15 @@ public class SearchController {
         );
 
         isSearching.setValue(true);
-        new Thread(() -> {
+        ThreadPool.getInstance().execute(() -> {
             try{
                 List<NoteMetaData>  notes = CurrentSession.getDHT().query(queryPredicate);
                 isSearching.setValue(false);
                 updateTableData(notes);
             } catch (DHTException e) {
-                e.printStackTrace();
+                Notifications.exception(e);
             }
-        }).start();
+        });
 
     }
 
@@ -121,11 +122,16 @@ public class SearchController {
 
     @FXML
     public void download() {
-        if(catalogTreeTableView.getSelectionModel().getSelectedItem() == null) return;
+        if(catalogTreeTableView.getSelectionModel().getSelectedItem() == null){
+            Notifications.exception(new Exception("Selezionare almeno un appunto da aggiungere ai download."));
+            return;
+        }
+
         NoteDAO noteDAO = new NoteDAO();
         NoteMetaData info = catalogTreeTableView.getSelectionModel().getSelectedItem().getValue().getNoteMetaData();
 
         Note n = noteDAO.read(info.getTitle());
+
         if(n != null) {
             Notifications.exception(new Exception("Possiedi già questo file."));
             return;
@@ -134,6 +140,7 @@ public class SearchController {
         String path = this.path.getText();
         Note newNote = new Note(info.getTitle(), path + "/" + info.getTitle() + ".pdf");
         newNote.setNoteMetaData(info);
+
         DownloadManager.register(newNote);
         downloadDialog.close();
     }
@@ -194,7 +201,7 @@ public class SearchController {
             data.add(new SearchTreeTableNoteMetaData(n));
     }
 
-    private class SearchTreeTableNoteMetaData extends RecursiveTreeObject<SearchTreeTableNoteMetaData> {
+    private static class SearchTreeTableNoteMetaData extends RecursiveTreeObject<SearchTreeTableNoteMetaData> {
         final StringProperty title;
         final StringProperty subject;
         final StringProperty author;
