@@ -21,11 +21,13 @@ import it.polimi.polishare.peer.network.server.ReverseSessionImpl;
 import it.polimi.polishare.peer.CurrentSession;
 import it.polimi.polishare.peer.utils.Notifications;
 import it.polimi.polishare.peer.utils.Settings;
+import it.polimi.polishare.peer.utils.ThreadPool;
 import javafx.fxml.FXML;
 import javafx.util.Duration;
 
 import javax.annotation.PostConstruct;
 import java.rmi.RemoteException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @ViewController(value = "/view/Login.fxml", title = "Polishare")
 public class LoginController {
@@ -57,20 +59,31 @@ public class LoginController {
         if(!(username.validate() && password.validate()))
             return;
 
-        try {
-            Session session = App.sf.login(username.getText(), password.getText());
+        AtomicBoolean successfull = new AtomicBoolean(false);
 
-            CurrentSession.setSession(session);
-            CurrentSession.setUsername(username.getText());
-            CurrentSession.setReverseSession(new ReverseSessionImpl());
-            CurrentSession.setDHT(new DHTImpl<>(username.getText(), NoteMetaData.class));
-            CurrentSession.getDHT().join(Settings.getProperty("server_ip"), CurrentSession.getSession().getServerDHTName());
-            CurrentSession.getSession().setReverseSession(CurrentSession.getReverseSession());
+        ThreadPool.getInstance().execute(() -> {
+            try {
+                Session session = App.sf.login(username.getText(), password.getText());
 
-            switchToAuthenticatedUI();
-        } catch (LoginFailedException e) {
-            Notifications.exception(e);
-        } catch (RemoteException | DHTException | FlowException e) {
+                CurrentSession.setSession(session);
+                CurrentSession.setUsername(username.getText());
+                CurrentSession.setReverseSession(new ReverseSessionImpl());
+                CurrentSession.setDHT(new DHTImpl<>(username.getText(), NoteMetaData.class));
+                CurrentSession.getDHT().join(Settings.getProperty("server_ip"), CurrentSession.getSession().getServerDHTName());
+                CurrentSession.getSession().setReverseSession(CurrentSession.getReverseSession());
+
+                successfull.set(true);
+            } catch (LoginFailedException e) {
+                Notifications.exception(e);
+            } catch (RemoteException | DHTException e) {
+                e.printStackTrace();
+            }
+        });
+
+        try{
+            if(successfull.get())
+                switchToAuthenticatedUI();
+        } catch (FlowException e) {
             e.printStackTrace();
         }
     }
