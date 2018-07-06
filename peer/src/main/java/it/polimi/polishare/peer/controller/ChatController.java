@@ -3,14 +3,18 @@ package it.polimi.polishare.peer.controller;
 import it.polimi.polishare.common.server.Message;
 import it.polimi.polishare.peer.CurrentSession;
 import it.polimi.polishare.peer.GroupChat;
+import it.polimi.polishare.peer.utils.Notifications;
+import it.polimi.polishare.peer.utils.ThreadPool;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 
+import java.awt.event.KeyEvent;
 import java.rmi.RemoteException;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
@@ -47,6 +51,11 @@ public class ChatController {
         messageBox.setMinWidth(width - 15.0);
         VBox.setMargin(messageBox, new Insets(5.0));
 
+        messageField.setOnKeyPressed(keyEvent -> {
+            if(keyEvent.getCode() == KeyCode.ENTER)
+                send();
+        });
+
         initMessages();
     }
 
@@ -54,12 +63,14 @@ public class ChatController {
     public void send() {
         if(messageField.getText().isEmpty()) return;
 
-        try {
-            CurrentSession.getSession().sendMessage(new Message(CurrentSession.getCurrentUsername(), messageField.getText()));
-            messageField.clear();
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
+        ThreadPool.getInstance().execute(() -> {
+            try {
+                CurrentSession.getSession().sendMessage(new Message(CurrentSession.getCurrentUsername(), messageField.getText()));
+                messageField.clear();
+            } catch (RemoteException e) {
+                Notifications.exception(e);
+            }
+        });
     }
 
     private void initMessages(){

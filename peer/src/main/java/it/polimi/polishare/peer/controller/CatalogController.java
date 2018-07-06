@@ -104,7 +104,7 @@ public class CatalogController {
         teacherColumn.prefWidthProperty().bind(catalogTreeTableView.widthProperty().divide(catalogTreeTableView.getColumns().size()));
         yearColumn.prefWidthProperty().bind(catalogTreeTableView.widthProperty().divide(catalogTreeTableView.getColumns().size()));
 
-        ThreadPool.getInstance().execute(() -> data = getTableData());
+        data = getTableData();
 
         catalogTreeTableView.setRoot(new RecursiveTreeItem<>(data, RecursiveTreeObject::getChildren));
 

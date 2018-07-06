@@ -12,6 +12,7 @@ import it.polimi.polishare.peer.controller.MainController;
 import it.polimi.polishare.peer.network.download.DownloaderImpl;
 import it.polimi.polishare.peer.utils.DB;
 import it.polimi.polishare.peer.utils.Settings;
+import it.polimi.polishare.peer.utils.ThreadPool;
 import javafx.application.Application;
 import javafx.collections.ObservableList;
 import javafx.geometry.Rectangle2D;
@@ -72,6 +73,7 @@ public class App  extends Application {
     public void stop() throws Exception {
         super.stop();
         CurrentSession.shutDown();
+        ThreadPool.getInstance().shutDown();
         UnicastRemoteObject.unexportObject(dw, true);
     }
 

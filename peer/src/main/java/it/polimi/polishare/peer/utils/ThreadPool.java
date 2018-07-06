@@ -19,4 +19,8 @@ public class ThreadPool {
     public void execute(Runnable runnable) {
         cachedThreadPool.execute(runnable);
     }
+
+    public void shutDown() {
+        cachedThreadPool.shutdown();
+    }
 }
