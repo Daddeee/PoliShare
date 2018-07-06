@@ -52,7 +52,7 @@ public class NodeImpl extends UnicastRemoteObject implements Node {
 
     @Override
     public void repliedRemove(Key k) throws RemoteException {
-        lookupSuccessor(k).repliedRemove(k);
+        lookupSuccessor(k).removeStored(k);
     }
 
     @Override
