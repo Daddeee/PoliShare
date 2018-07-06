@@ -14,6 +14,7 @@ import it.polimi.polishare.peer.model.NoteDAO;
 import it.polimi.polishare.common.DHT.operations.RemoveOwnerOperation;
 import it.polimi.polishare.peer.CurrentSession;
 import it.polimi.polishare.peer.utils.Notifications;
+import it.polimi.polishare.peer.utils.ThreadPool;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -69,7 +70,7 @@ public class CatalogController {
     private JFXTextField searchField;
 
     private JFXPopup popup;
-    private ObservableList<CatalogTreeTableNoteMetaData> data;
+    private ObservableList<CatalogTreeTableNoteMetaData> data = FXCollections.observableArrayList();
 
     @PostConstruct
     public void init() {
@@ -103,7 +104,8 @@ public class CatalogController {
         teacherColumn.prefWidthProperty().bind(catalogTreeTableView.widthProperty().divide(catalogTreeTableView.getColumns().size()));
         yearColumn.prefWidthProperty().bind(catalogTreeTableView.widthProperty().divide(catalogTreeTableView.getColumns().size()));
 
-        data = getTableData();
+        ThreadPool.getInstance().execute(() -> data = getTableData());
+
         catalogTreeTableView.setRoot(new RecursiveTreeItem<>(data, RecursiveTreeObject::getChildren));
 
         catalogTreeTableView.setShowRoot(false);
@@ -162,79 +164,85 @@ public class CatalogController {
             final ContextMenu contextMenu = new ContextMenu();
 
             MenuItem open = new MenuItem("Apri");
-            open.setOnAction(event -> {
-                new Thread(() ->  {
-                    File file = new File(row.getTreeItem().getValue().getNote().getPath());
-                    try {
-                        Desktop.getDesktop().open(file);
-                    } catch (Exception e) {
-                        Platform.runLater(() -> Notifications.exception(new Exception("Impossibile aprire il file.")));
-                    }
-                }).start();
-            });
+            open.setOnAction(event -> ThreadPool.getInstance().execute(() ->  openFile(row)));
 
             MenuItem reviews = new MenuItem("Visualizza Recensioni");
-            reviews.setOnAction(e -> {
-                double popupHeight = catalogTreeTableView.getHeight()*4/5;
-                double popupWidth = catalogTreeTableView.getWidth()*4/5;
-
-                try {
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/popup/Reviews.fxml"));
-                    popup = new JFXPopup(loader.load());
-
-                    ((ReviewsController) loader.getController()).initData(row.getTreeItem().getValue().getNote(), popupHeight, popupWidth);
-                } catch (IOException ioExc) {
-                    ioExc.printStackTrace();
-                }
-                Parent root = (Parent) context.getRegisteredObject("Root");
-                Bounds rootBounds = root.getLayoutBounds();
-
-                popup.show(root, JFXPopup.PopupVPosition.TOP, JFXPopup.PopupHPosition.LEFT,
-                        (rootBounds.getWidth() - popupWidth) / 2,
-                        (rootBounds.getHeight() - popupHeight) / 2);
-            });
+            reviews.setOnAction(e -> showReviewsPopup(row));
 
             MenuItem addReview = new MenuItem("Aggiungi Recensione");
-            addReview.setOnAction(e -> {
-                double popupHeight = catalogTreeTableView.getHeight()*3/5;
-                double popupWidth = catalogTreeTableView.getWidth()*3/5;
-
-                try {
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/popup/AddReview.fxml"));
-                    popup = new JFXPopup(loader.load());
-
-                    ((AddReviewController) loader.getController()).initData(this, row.getTreeItem().getValue().getNote(), popupHeight, popupWidth);
-                } catch (IOException ioExc) {
-                    ioExc.printStackTrace();
-                }
-                Parent root = (Parent) context.getRegisteredObject("Root");
-                Bounds rootBounds = root.getLayoutBounds();
-
-                popup.show(root, JFXPopup.PopupVPosition.TOP, JFXPopup.PopupHPosition.LEFT,
-                        (rootBounds.getWidth() - popupWidth) / 2,
-                        (rootBounds.getHeight() - popupHeight) / 2);
-            });
+            addReview.setOnAction(e -> showAddReviewPopup(row));
 
             MenuItem delete = new MenuItem("Elimina");
-            delete.setOnAction(e -> {
-                try {
-                    CurrentSession.getDHT().exec(row.getTreeItem().getValue().title.get(), new RemoveOwnerOperation(App.dw));
-                    Files.deleteIfExists(Paths.get(row.getTreeItem().getValue().getNote().getPath()));
-
-                    data.remove(row.getItem());
-
-                    NoteDAO noteDAO = new NoteDAO();
-                    noteDAO.delete(row.getTreeItem().getValue().title.get());
-                } catch (DHTException | IOException ex) {
-                    Notifications.exception(ex);
-                }
-            });
+            delete.setOnAction(e -> ThreadPool.getInstance().execute(() -> deleteFile(row)));
 
             contextMenu.getItems().addAll(open, reviews, addReview, delete);
 
             row.setContextMenu(contextMenu);
             return row;
         });
+    }
+
+    private void showReviewsPopup(TreeTableRow<CatalogTreeTableNoteMetaData> row) {
+        double popupHeight = catalogTreeTableView.getHeight()*4/5;
+        double popupWidth = catalogTreeTableView.getWidth()*4/5;
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/popup/Reviews.fxml"));
+            popup = new JFXPopup(loader.load());
+
+            ((ReviewsController) loader.getController()).initData(row.getTreeItem().getValue().getNote(), popupHeight, popupWidth);
+        } catch (IOException ioExc) {
+            ioExc.printStackTrace();
+        }
+        Parent root = (Parent) context.getRegisteredObject("Root");
+        Bounds rootBounds = root.getLayoutBounds();
+
+        popup.show(root, JFXPopup.PopupVPosition.TOP, JFXPopup.PopupHPosition.LEFT,
+                (rootBounds.getWidth() - popupWidth) / 2,
+                (rootBounds.getHeight() - popupHeight) / 2);
+    }
+
+    private void showAddReviewPopup(TreeTableRow<CatalogTreeTableNoteMetaData> row) {
+        double popupHeight = catalogTreeTableView.getHeight()*3/5;
+        double popupWidth = catalogTreeTableView.getWidth()*3/5;
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/popup/AddReview.fxml"));
+            popup = new JFXPopup(loader.load());
+
+            ((AddReviewController) loader.getController()).initData(this, row.getTreeItem().getValue().getNote(), popupHeight, popupWidth);
+        } catch (IOException ioExc) {
+            ioExc.printStackTrace();
+        }
+        Parent root = (Parent) context.getRegisteredObject("Root");
+        Bounds rootBounds = root.getLayoutBounds();
+
+        popup.show(root, JFXPopup.PopupVPosition.TOP, JFXPopup.PopupHPosition.LEFT,
+                (rootBounds.getWidth() - popupWidth) / 2,
+                (rootBounds.getHeight() - popupHeight) / 2);
+    }
+
+    private void deleteFile(TreeTableRow<CatalogTreeTableNoteMetaData> row) {
+        try {
+            CurrentSession.getDHT().exec(row.getTreeItem().getValue().title.get(), new RemoveOwnerOperation(App.dw));
+            Files.deleteIfExists(Paths.get(row.getTreeItem().getValue().getNote().getPath()));
+
+            data.remove(row.getItem());
+
+            NoteDAO noteDAO = new NoteDAO();
+            noteDAO.delete(row.getTreeItem().getValue().title.get());
+        } catch (DHTException | IOException ex) {
+            Notifications.exception(ex);
+        }
+    }
+
+    private void openFile(TreeTableRow<CatalogTreeTableNoteMetaData> row) {
+        File file = new File(row.getTreeItem().getValue().getNote().getPath());
+        try {
+            Desktop.getDesktop().open(file);
+        } catch (Exception e) {
+            Platform.runLater(() -> Notifications.exception(new Exception("Impossibile aprire il file.")));
+        }
     }
 
     public JFXPopup getPopup() {
