@@ -25,8 +25,8 @@ public class DB {
         c.close();
     }
 
-    public static void setDbName(String db){
-        dbName = db;
+    public static void setDbName(String dbName){
+        DB.dbName = dbName;
     }
 
     public static Connection getConnection() throws SQLException {
