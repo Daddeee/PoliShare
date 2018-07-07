@@ -75,9 +75,8 @@ public class DownloadManager {
                         byte[] chunk = current.getChunk(download.getNote().getTitle(), from, to);
                         download.addChunk(chunk, from, to);
 
-                        Platform.runLater(() -> {
-                            downloadController.updateDownload(download.getNote().getTitle(), download);
-                        });
+                        if(downloadController != null)
+                            Platform.runLater(() -> downloadController.updateDownload(download.getNote().getTitle(), download));
 
                         return;
                     } catch (RemoteException e) {
@@ -112,7 +111,7 @@ public class DownloadManager {
         try {
             CurrentSession.getDHT().exec(download.getNote().getTitle(), new AddOwnerOperation(App.dw));
             new NoteDAO().create(download.getNote());
-        } catch (DHTException | AddFailedException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
