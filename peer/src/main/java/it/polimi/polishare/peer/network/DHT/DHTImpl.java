@@ -70,7 +70,7 @@ public class DHTImpl<T> implements DHT<T> {
     public void put(String key, T value) throws DHTException {
         try{
             Key k = new Key(key);
-            node.repliedPut(k, value);
+            node.put(k, value);
         } catch (Exception e) {
             throw new DHTException("Cannot store value: " + e.getMessage());
         }
@@ -80,7 +80,7 @@ public class DHTImpl<T> implements DHT<T> {
     public void remove(String key) throws DHTException {
         try{
             Key k = new Key(key);
-            node.repliedRemove(k);
+            node.remove(k);
         } catch (Exception e) {
             throw new DHTException("Cannot remove the given key: " + e.getMessage());
         }

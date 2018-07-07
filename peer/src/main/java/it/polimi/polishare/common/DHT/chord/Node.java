@@ -51,9 +51,9 @@ public interface Node extends Remote {
 
     List<Object> get(Predicate predicate) throws RemoteException;
 
-    void repliedPut(Key k, Object value) throws RemoteException;
+    void put(Key k, Object value) throws RemoteException;
 
-    void repliedRemove(Key k) throws RemoteException;
+    void remove(Key k) throws RemoteException;
 
     void exec(Key k, Operation op) throws RemoteException;
 }

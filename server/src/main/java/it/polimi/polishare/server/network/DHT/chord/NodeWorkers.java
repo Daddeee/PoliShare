@@ -2,6 +2,11 @@ package it.polimi.polishare.server.network.DHT.chord;
 
 import it.polimi.polishare.common.DHT.chord.Node;
 
+/**
+ * Represents a {@link it.polimi.polishare.common.DHT.chord.Node Node}'s background tasks.
+ * This tasks call periodically the methods {@link Node#stabilize() stabilize}, {@link Node#checkPred()} () checkPred},
+ * {@link Node#fixFingers() fixFingers} and {@link Node#replicate() replicate} to maintain the correct state of the node.
+ */
 public class NodeWorkers {
     private static final int PERIODIC_STABILIZATION_DELAY = 1000;
     private static final int PERIODIC_PREDECESSOR_CHECK_DELAY = 1000;
@@ -12,10 +17,18 @@ public class NodeWorkers {
     private Thread t1, t2, t3, t4;
     private volatile boolean running = true;
 
+    /**
+     * Create the tasks for the given Node.
+     *
+     * @param Node
+     */
     public NodeWorkers(Node Node){
         this.node = Node;
     }
 
+    /**
+     * Starts the background tasks.
+     */
     public void start(){
         running = true;
         t1 = new Thread(this::stabilizer);
@@ -28,11 +41,14 @@ public class NodeWorkers {
         t4.start();
     }
 
+    /**
+     * Stops the background tasks.
+     */
     public void stop(){
         this.running = false;
     }
 
-    public void stabilizer(){
+    private void stabilizer(){
         while(running) {
             try{
                 Thread.sleep(PERIODIC_STABILIZATION_DELAY);
@@ -43,7 +59,7 @@ public class NodeWorkers {
         }
     }
 
-    public void predChecker(){
+    private void predChecker(){
         while(running) {
             try{
                 Thread.sleep(PERIODIC_PREDECESSOR_CHECK_DELAY);
@@ -54,7 +70,7 @@ public class NodeWorkers {
         }
     }
 
-    public void fingersFixer(){
+    private void fingersFixer(){
         while(running) {
             try{
                 Thread.sleep(PERIODIC_FINGERS_FIX_DELAY);
@@ -65,7 +81,7 @@ public class NodeWorkers {
         }
     }
 
-    public void replicator() {
+    private void replicator() {
         while(running) {
             try {
                 Thread.sleep(PERIODIC_REPLICATION_DELAY);
