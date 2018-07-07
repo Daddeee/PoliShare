@@ -1,9 +1,8 @@
 package it.polimi.polishare.server.utils;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import it.polimi.polishare.server.App;
+
+import java.sql.*;
 
 public class DB {
     private static String dbName = "server.db";
@@ -16,13 +15,18 @@ public class DB {
                 "mail          VARCHAR(40) UNIQUE NOT NULL" +
                 ");";
 
+        String addUserQuery = "INSERT INTO users (username, password, mail) VALUES (?, ?, ?)";
         Connection c = getConnection();
 
         Statement stmnt = c.createStatement();
-
         stmnt.executeUpdate(createNotesTable);
-
         stmnt.close();
+
+        PreparedStatement addUser = c.prepareStatement(addUserQuery);
+        addUser.setString(1, App.DHT_NAME);
+        addUser.setString(2, new RandomString(20).nextString());
+        addUser.setString(3, "polishare@outlook.com");
+        addUser.executeUpdate();
 
         c.close();
     }
@@ -32,8 +36,7 @@ public class DB {
     }
 
     public static Connection getConnection() throws SQLException {
-        Connection c = DriverManager.getConnection("jdbc:sqlite:" + dbName);
-        return c;
+        return DriverManager.getConnection("jdbc:sqlite:" + dbName);
     }
 
     public static void closeConnection(Connection c) throws SQLException {
