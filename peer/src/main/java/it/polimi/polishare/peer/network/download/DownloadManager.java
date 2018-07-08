@@ -93,27 +93,32 @@ public class DownloadManager {
             }
         }
 
-        String downloadedMD5 = DigestUtils.md5Hex(download.getFileBytes());
-        if(!downloadedMD5.equals(download.getMd5())) throw new RuntimeException("Il file ricevuto non corrisponde al file remoto");
+        checkMD5(download);
 
         try {
-            File file = new File(download.getNote().getPath());
-            BufferedOutputStream output = new BufferedOutputStream(new FileOutputStream(file.getName()));
-            output.write(download.getFileBytes(), 0, download.getSize());
-            output.flush();
-            output.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+            writeFile(download);
 
-        try {
             CurrentSession.getDHT().exec(download.getNote().getTitle(), new AddOwnerOperation(App.dw));
+            
             new NoteDAO().create(download.getNote());
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         activeDownloads.remove(download.getNote().getTitle());
+    }
+
+    private static void writeFile(Download download) throws IOException {
+        File file = new File(download.getNote().getPath());
+        BufferedOutputStream output = new BufferedOutputStream(new FileOutputStream(file.getName()));
+        output.write(download.getFileBytes(), 0, download.getSize());
+        output.flush();
+        output.close();
+    }
+
+    private static void checkMD5(Download download) {
+        String downloadedMD5 = DigestUtils.md5Hex(download.getFileBytes());
+        if(!downloadedMD5.equals(download.getMd5())) throw new RuntimeException("Il file ricevuto non corrisponde al file remoto");
     }
 
     private static int calculateChunksNumber(int size, int chunkSize) {
