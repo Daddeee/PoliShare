@@ -1,7 +1,5 @@
 package it.polimi.polishare.peer.network.download;
 
-import it.polimi.polishare.common.*;
-import it.polimi.polishare.common.DHT.DHTException;
 import it.polimi.polishare.common.DHT.model.NoteMetaData;
 import it.polimi.polishare.common.DHT.operations.AddOwnerOperation;
 import it.polimi.polishare.common.download.Downloader;

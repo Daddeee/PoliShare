@@ -46,7 +46,7 @@ class DownloadManagerTest {
 
         Download d = DownloadManager.getActiveDownloads().get("Titolo");
         assertEquals(d.getNote(), note);
-        assertEquals(d.getReceivedQuantity(), 0);
+        assertEquals(d.getReceivedPercentage(), 0);
         assertFalse(d.isStarted());
         assertEquals(d.getSize(), downloader1.getSize("Titolo"));
         assertEquals(d.getMd5(), downloader1.getMD5("Titolo"));

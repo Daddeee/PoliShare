@@ -65,8 +65,8 @@ public class DownloadController {
 
     public void updateDownload(String title, Download download) {
         SingleDownloadUI downloadUI = downloadBoxes.get(title);
-        if (download.getReceivedQuantity() < 1.0) {
-            downloadUI.progress(download.getReceivedQuantity());
+        if (download.getReceivedPercentage() < 1.0) {
+            downloadUI.progress(download.getReceivedPercentage());
         } else {
             downloadUI.completed();
             downloadUI.getStartButton().setDisable(true);
@@ -112,7 +112,7 @@ public class DownloadController {
             this.removeButton = new JFXButton();
             this.progressBar = new JFXProgressBar();
             this.titleLabel = new Label(title);
-            this.percentLabel = new Label(String.format( "%.2f", downloadData.getReceivedQuantity() * 100) + "%");
+            this.percentLabel = new Label(String.format( "%.2f", downloadData.getReceivedPercentage() * 100) + "%");
 
             GridPane.setHgrow(root, Priority.ALWAYS);
             GridPane.setMargin(root, new Insets(20.0));
@@ -167,7 +167,7 @@ public class DownloadController {
             Region bodyRegion = new Region();
             HBox.setHgrow(bodyRegion, Priority.ALWAYS);
 
-            progressBar.setProgress(downloadData.getReceivedQuantity());
+            progressBar.setProgress(downloadData.getReceivedPercentage());
             HBox.setHgrow(progressBar, Priority.ALWAYS);
             progressBar.getStyleClass().add("custom-jfx-progress-bar-stroke");
 

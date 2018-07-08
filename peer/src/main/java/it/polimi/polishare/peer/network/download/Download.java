@@ -41,7 +41,7 @@ public class Download {
         return fileBytes;
     }
 
-    public double getReceivedQuantity() {
+    public double getReceivedPercentage() {
         return (double)receivedChunks.get()/(double)chunksNumber;
     }
 
