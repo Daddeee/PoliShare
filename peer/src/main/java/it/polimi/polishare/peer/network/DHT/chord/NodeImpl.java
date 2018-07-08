@@ -162,11 +162,6 @@ public class NodeImpl extends UnicastRemoteObject implements Node {
     }
 
     @Override
-    public Node[] getFingers() {
-        return fingers;
-    }
-
-    @Override
     public Node lookupSuccessor(Key k) throws RemoteException{
         if(k.equals(this.key)) return this;
 
