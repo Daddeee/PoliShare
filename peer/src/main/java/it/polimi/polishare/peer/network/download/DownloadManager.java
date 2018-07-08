@@ -8,6 +8,7 @@ import it.polimi.polishare.peer.CurrentSession;
 import it.polimi.polishare.peer.controller.DownloadController;
 import it.polimi.polishare.peer.model.Note;
 import it.polimi.polishare.peer.model.NoteDAO;
+import it.polimi.polishare.peer.utils.Notifications;
 import javafx.application.Platform;
 import org.apache.commons.codec.digest.DigestUtils;
 
@@ -59,6 +60,10 @@ public class DownloadManager {
 
     public static void start(Download download) {
         List<Downloader> activeDownloaders = getActiveDownloaders(download.getNote().getNoteMetaData());
+        if(activeDownloaders.size() == 0) {
+            Platform.runLater(() -> Notifications.exception(new Exception("Nessun utente da cui scaricare il file è attualmente online.")));
+            return;
+        }
 
         for (int i = 0; i < download.getChunksNumber(); i++) {
             int from = i * download.getChunkSize();
