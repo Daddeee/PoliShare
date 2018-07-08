@@ -96,17 +96,16 @@ public class PublishController {
         if(!(title.validate() && author.validate() && subject.validate() && teacher.validate() && year.validate() && path.validate()))
             return;
 
-        AtomicBoolean fetchSuccessfull = new AtomicBoolean(false);
-        ThreadPool.getInstance().execute(() -> {
-            try {
-                NoteMetaData fetch = CurrentSession.getDHT().get(title.getText());
-                if(fetch != null) {
-                    Notifications.exception(new Exception("Un file con il titolo selezionato è già presente nel sistema."));
-                    fetchSuccessfull.set(true);
-                }
-            } catch (DHTException e) {}
-        });
-        if(fetchSuccessfull.get()) return;
+        try{
+            NoteMetaData fetch = CurrentSession.getDHT().get(title.getText());
+            if(fetch != null) {
+                Notifications.exception(new Exception("Un file con il titolo selezionato è già presente nel sistema."));
+                return;
+            }
+        } catch (DHTException e) {
+            Notifications.exception(e);
+            return;
+        }
 
         NoteDAO noteDAO = new NoteDAO();
 
