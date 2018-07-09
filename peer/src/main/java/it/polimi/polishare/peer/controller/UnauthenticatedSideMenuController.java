@@ -17,6 +17,9 @@ import javafx.scene.control.Label;
 import javax.annotation.PostConstruct;
 import java.util.Objects;
 
+/**
+ * Manages the unauthenticated side menu's interface.
+ */
 @ViewController(value = "/view/UnauthenticatedSideMenu.fxml")
 public class UnauthenticatedSideMenuController {
 
@@ -38,6 +41,9 @@ public class UnauthenticatedSideMenuController {
     @FXML
     private JFXListView<Label> sideList;
 
+    /**
+     * Load the side menu and links each entry with the corresponding view that will be shown on click.
+     */
     @PostConstruct
     public void init() {
         Objects.requireNonNull(context, "context");

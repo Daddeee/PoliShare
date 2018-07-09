@@ -15,6 +15,9 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
+/**
+ * Displays the reviews associated to a given note.
+ */
 public class ReviewsController {
     @FXML
     private VBox main;
@@ -45,6 +48,12 @@ public class ReviewsController {
 
     private Note note;
 
+    /**
+     * Load the reviews popup for the given note and with the given dimensional parameters.
+     * @param note the note whose reviews we are loading
+     * @param height the current stage's height
+     * @param width the current stage's width
+     */
     public void initData(Note note, double height, double width){
         this.note = note;
 

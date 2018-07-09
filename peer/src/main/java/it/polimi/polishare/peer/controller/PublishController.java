@@ -22,6 +22,9 @@ import javax.annotation.PostConstruct;
 import java.io.File;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * Manages the interface used to publish a note.
+ */
 @ViewController(value = "/view/Publish.fxml")
 public class PublishController {
     @FXMLViewFlowContext
@@ -42,6 +45,9 @@ public class PublishController {
 
     private final FileChooser fileChooser = new FileChooser();
 
+    /**
+     * Loads every input field with its corresponding validators.
+     */
     @PostConstruct
     public void init() {
         title.focusedProperty().addListener((o, oldVal, newVal) -> {
@@ -81,6 +87,9 @@ public class PublishController {
         });
     }
 
+    /**
+     * Load a system-dependent interface to select a file to upload.
+     */
     @FXML
     private void searchPath(){
         Stage stage = (Stage) flowContext.getRegisteredObject("Stage");
@@ -91,6 +100,11 @@ public class PublishController {
         }
     }
 
+    /**
+     * Try to save a note in the DHT. Before saving every input field is validated and the DHT is queried to see if this
+     * title is already present on the network. If those conditions aren't met or something goes wrong in the file
+     * publication, an error notification is shown.
+     */
     @FXML
     private void save() {
         if(!(title.validate() && author.validate() && subject.validate() && teacher.validate() && year.validate() && path.validate()))

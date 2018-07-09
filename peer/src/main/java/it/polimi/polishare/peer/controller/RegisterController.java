@@ -14,6 +14,9 @@ import javafx.fxml.FXML;
 import javax.annotation.PostConstruct;
 import java.rmi.RemoteException;
 
+/**
+ * Manages the interface used to register a new user on the platform.
+ */
 @ViewController(value = "/view/Register.fxml", title = "Polishare")
 public class RegisterController {
     @FXMLViewFlowContext
@@ -24,6 +27,9 @@ public class RegisterController {
     @FXML
     private JFXTextField username;
 
+    /**
+     * Loads the JFXTextFields with the given validators.
+     */
     @PostConstruct
     public void init() {
         username.focusedProperty().addListener((o, oldVal, newVal) -> {
@@ -39,6 +45,10 @@ public class RegisterController {
         });
     }
 
+    /**
+     * Validates the user input and call the server to register a new user with the given mail and username values.
+     * If the registration is succesfull a confirm notification is shown, otherwise an error notification is shown.
+     */
     @FXML
     private void register() {
         if(!(username.validate() && email.validate()))

@@ -6,8 +6,14 @@ import javafx.scene.control.TextInputControl;
 
 import java.io.File;
 
+/**
+ * A validator to test if the path entered by the user in a JFXTextField corresponds to a directory.
+ */
 @DefaultProperty("icon")
 public class DirectoryValidator extends ValidatorBase {
+    /**
+     * Check if the entered path is not null and corresponds to a directory.
+     */
     @Override
     protected void eval() {
         TextInputControl textField = (TextInputControl)this.srcControl.get();

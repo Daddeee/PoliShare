@@ -18,8 +18,10 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
 
 import java.util.Arrays;
-import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * Manages the popup used to add a review on a specific note.
+ */
 public class AddReviewController {
     @FXML
     private VBox main;
@@ -46,6 +48,14 @@ public class AddReviewController {
 
     private static ReviewMetaData newReview = null;
 
+    /**
+     * Initialize the new window providing necessary data.
+     *
+     * @param catalogController the controller from which this popup was opened
+     * @param note the note on which i want to add a review
+     * @param height current height of the stage
+     * @param width current width of the stage
+     */
     public void initData(CatalogController catalogController, Note note, double height, double width){
         this.note = note;
         this.catalogController = catalogController;
@@ -94,36 +104,61 @@ public class AddReviewController {
         }
     }
 
+    /**
+     * Sets the new review's rating to 1 and update the UI changing the corresponding star's color.
+     * @param e
+     */
     @FXML
     public void setOneStar(ActionEvent e){
         newReview.setRating(1);
         initNewReviewRating();
     }
 
+    /**
+     * Sets the new review's rating to 2 and update the UI changing the corresponding star's color.
+     * @param e
+     */
     @FXML
     public void setTwoStar(ActionEvent e){
         newReview.setRating(2);
         initNewReviewRating();
     }
 
+    /**
+     * Sets the new review's rating to 3 and update the UI changing the corresponding star's color.
+     * @param e
+     */
     @FXML
     public void setThreeStar(ActionEvent e){
         newReview.setRating(3);
         initNewReviewRating();
     }
 
+    /**
+     * Sets the new review's rating to 4 and update the UI changing the corresponding star's color.
+     * @param e
+     */
     @FXML
     public void setFourStar(ActionEvent e){
         newReview.setRating(4);
         initNewReviewRating();
     }
 
+    /**
+     * Sets the new review's rating to 5 and update the UI changing the corresponding star's color.
+     * @param e
+     */
     @FXML
     public void setFiveStar(ActionEvent e){
         newReview.setRating(5);
         initNewReviewRating();
     }
 
+    /**
+     * Saves the new review in the DHT. If the review's body has more than 500 words the saving process is aborted and an
+     * error notification is displayed on the screen. A notification is shown even if something goes wrong with the saving.
+     * @param e
+     */
     @FXML
     public void save(ActionEvent e){
         newReview.setBody(newReviewBody.getText());

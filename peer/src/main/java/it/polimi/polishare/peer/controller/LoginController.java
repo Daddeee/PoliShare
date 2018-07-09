@@ -30,6 +30,9 @@ import javax.annotation.PostConstruct;
 import java.rmi.RemoteException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * Manages the login interface.
+ */
 @ViewController(value = "/view/Login.fxml", title = "Polishare")
 public class LoginController {
     @FXMLViewFlowContext
@@ -40,6 +43,9 @@ public class LoginController {
     @FXML
     private JFXPasswordField password;
 
+    /**
+     * Loads the JFXTextFields with the given validators.
+     */
     @PostConstruct
     public void init() {
         username.focusedProperty().addListener((o, oldVal, newVal) -> {
@@ -55,6 +61,10 @@ public class LoginController {
         });
     }
 
+    /**
+     * Try to login the user on the server with the provided credentials. If the login is succesfull, the UI is switched
+     * to the authenticated one, otherwise an error message is shown.
+     */
     @FXML
     private void login() {
         if(!(username.validate() && password.validate()))

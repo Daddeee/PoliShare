@@ -25,6 +25,9 @@ import javax.annotation.PostConstruct;
 import java.rmi.RemoteException;
 import java.util.Objects;
 
+/**
+ * Manages the side menu's interface.
+ */
 @ViewController(value = "/view/SideMenu.fxml")
 public class SideMenuController {
 
@@ -46,6 +49,9 @@ public class SideMenuController {
     @FXML
     private JFXListView<Label> sideList;
 
+    /**
+     * Load the side menu and links each entry with the corresponding view that will be shown on click.
+     */
     @PostConstruct
     public void init() {
         Objects.requireNonNull(context, "context");
@@ -76,6 +82,9 @@ public class SideMenuController {
         flow.withGlobalLink(node.getId(), controllerClass);
     }
 
+    /**
+     * Logout from the current session and switch back to the unauthenticated UI.
+     */
     @FXML
     public void logout() {
         try {

@@ -30,6 +30,9 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+/**
+ * Manages the interface used by unauthenticated users to query the DHT.
+ */
 @ViewController(value = "/view/Search.fxml", title = "Polishare")
 public class UnauthenticatedSearchController {
     @FXMLViewFlowContext
@@ -70,8 +73,12 @@ public class UnauthenticatedSearchController {
 
     private BooleanProperty isSearching = new SimpleBooleanProperty(false);
 
-    public ObservableList<SearchTreeTableNoteMetaData> data = FXCollections.observableArrayList();
+    private ObservableList<SearchTreeTableNoteMetaData> data = FXCollections.observableArrayList();
 
+    /**
+     * Query the DHT with the given values of each filter and displays the results in the result's table.
+     * If something with the query goes wrong, an error notification is shown.
+     */
     @FXML
     public void query() {
         if(!yearField.validate()) return;
@@ -99,6 +106,9 @@ public class UnauthenticatedSearchController {
         });
     }
 
+    /**
+     * Resets the filter fields.
+     */
     @FXML
     public void clear() {
         rating.getSelectionModel().clearSelection();
@@ -109,15 +119,27 @@ public class UnauthenticatedSearchController {
         yearField.clear();
     }
 
+    /**
+     * Unused in this controller.
+     */
     @FXML
     public void searchPath() {}
 
+    /**
+     * Unused in this controller.
+     */
     @FXML
     public void download() {}
 
+    /**
+     * Unused in this controller.
+     */
     @FXML
     public void showDownload() {}
 
+    /**
+     * Loads the table and the filter's components.
+     */
     @PostConstruct
     public void init() {
         downloadButton.setVisible(false);
@@ -157,7 +179,7 @@ public class UnauthenticatedSearchController {
         });
     }
 
-    public void updateTableData(List<NoteMetaData> notes) {
+    private void updateTableData(List<NoteMetaData> notes) {
         data.clear();
 
         for(NoteMetaData n : notes)

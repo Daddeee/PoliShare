@@ -21,6 +21,9 @@ import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Manages the interface showing the current active downloads.
+ */
 @ViewController(value = "/view/Download.fxml", title = "Polishare")
 public class DownloadController {
     @FXMLViewFlowContext
@@ -32,12 +35,19 @@ public class DownloadController {
     private HashMap<String, SingleDownloadUI> downloadBoxes;
     private HashMap<String, Download> activeDownloads;
 
+    /**
+     * Sets this controller as the one to be updated by the DownloadManager and loads active downloads data.
+     */
     @PostConstruct
     public void initData() {
         DownloadManager.setDownloadController(this);
         initDownloadData();
     }
 
+    /**
+     * Starts a download.
+     * @param singleDownloadUI the download to be started.
+     */
     @FXML
     public void startButtonAction(SingleDownloadUI singleDownloadUI) {
         singleDownloadUI.getDownload().start();
@@ -47,6 +57,10 @@ public class DownloadController {
         singleDownloadUI.getRemoveButton().setDisable(true);
     }
 
+    /**
+     * Stops a running download.
+     * @param singleDownloadUI the active download to be stopped.
+     */
     @FXML
     public void stopButtonAction(SingleDownloadUI singleDownloadUI) {
         singleDownloadUI.getDownload().stop();
@@ -57,12 +71,21 @@ public class DownloadController {
         singleDownloadUI.getRemoveButton().setDisable(false);
     }
 
+    /**
+     * Remove an unactive download from the list.
+     * @param singleDownloadUI the download to be removed.
+     */
     @FXML
     public void removeButtonAction(SingleDownloadUI singleDownloadUI) {
         downloadBox.getChildren().remove(singleDownloadUI.getRoot());
         DownloadManager.removeActiveDownload(singleDownloadUI.getDownload().getNote().getTitle());
     }
 
+    /**
+     * Updates the status of a single download.
+     * @param title the title of the file downloaded.
+     * @param download the actual download object,
+     */
     public void updateDownload(String title, Download download) {
         SingleDownloadUI downloadUI = downloadBoxes.get(title);
         if (download.getReceivedPercentage() < 1.0) {

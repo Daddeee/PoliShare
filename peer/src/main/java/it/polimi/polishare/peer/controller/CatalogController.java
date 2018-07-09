@@ -41,6 +41,9 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.function.Function;
 
+/**
+ * Manages the catalog interface that shows notes downloaded by the current user.
+ */
 @ViewController(value = "/view/Catalog.fxml")
 public class CatalogController {
     public static final String CONTENT_PANE = "ContentPane";
@@ -72,12 +75,20 @@ public class CatalogController {
     private JFXPopup popup;
     private ObservableList<CatalogTreeTableNoteMetaData> data = FXCollections.observableArrayList();
 
+    /**
+     * Load the catalog table and the associated context menu.
+     */
     @PostConstruct
     public void init() {
         setupCatalogTableView();
         setupContextMenu();
     }
 
+    /**
+     * Pick the note with the title equal to the one provided in the noteMetaData parameter and set the parameter as its
+     * noteMetaData. If no note is found, ignore the update.
+     * @param noteMetaData the provided noteMetaData
+     */
     public void updateData(NoteMetaData noteMetaData) {
         CatalogTreeTableNoteMetaData toUpdate = null;
         for (CatalogTreeTableNoteMetaData c : data) {
@@ -245,6 +256,9 @@ public class CatalogController {
         }
     }
 
+    /**
+     * @return the review's popup.
+     */
     public JFXPopup getPopup() {
         return popup;
     }

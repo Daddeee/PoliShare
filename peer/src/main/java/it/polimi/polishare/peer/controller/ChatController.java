@@ -32,6 +32,12 @@ public class ChatController {
 
     private static Collection<Message> messages;
 
+    /**
+     * Initialize the chat's popup.
+     *
+     * @param height the current stage's height
+     * @param width the current stage's width
+     */
     public void initData(double height, double width) {
         GroupChat.setChatController(this);
 
@@ -60,6 +66,10 @@ public class ChatController {
         initMessages();
     }
 
+    /**
+     * Sends a chat message to the server. If the message's body is empty, the sending is aborted. If the message delivery
+     * fails, an error notification is shown on the screen.
+     */
     @FXML
     public void send() {
         if(messageField.getText().isEmpty()) return;
@@ -83,6 +93,10 @@ public class ChatController {
         }
     }
 
+    /**
+     * Update the message view by adding a new message.
+     * @param m the message to be added.
+     */
     public void addMessage(Message m) {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM-dd HH:mm:ss");
         VBox messageVBox = new VBox();

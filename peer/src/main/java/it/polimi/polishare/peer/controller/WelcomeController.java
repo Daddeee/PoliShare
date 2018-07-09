@@ -6,6 +6,9 @@ import javafx.scene.control.Label;
 
 import javax.annotation.PostConstruct;
 
+/**
+ * Manages the welcome screen.
+ */
 @ViewController(value = "/view/Welcome.fxml", title = "Polishare")
 public class WelcomeController {
     @FXML
@@ -20,6 +23,9 @@ public class WelcomeController {
             "Registrati inserendo la tua email e accedi alle piene funzionalità di Polishare: potrai scaricare, " +
             "caricare e consultare tutti gli appunti disponibili in rete, oltre a chattare direttamente con gli utenti online.\n";
 
+    /**
+     * Displays the welcome message.
+     */
     @PostConstruct
     public void init() {
         text.setText(welcomeMessage);

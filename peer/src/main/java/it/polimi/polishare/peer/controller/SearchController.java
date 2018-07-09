@@ -33,6 +33,9 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+/**
+ * Manages the interface used by authenticated users to query the DHT.
+ */
 @ViewController(value = "/view/Search.fxml", title = "Polishare")
 public class SearchController {
     @FXMLViewFlowContext
@@ -75,8 +78,12 @@ public class SearchController {
 
     private BooleanProperty isSearching = new SimpleBooleanProperty(false);
 
-    public ObservableList<SearchTreeTableNoteMetaData> data = FXCollections.observableArrayList();
+    private ObservableList<SearchTreeTableNoteMetaData> data = FXCollections.observableArrayList();
 
+    /**
+     * Query the DHT with the given values of each filter and displays the results in the result's table.
+     * If something with the query goes wrong, an error notification is shown.
+     */
     @FXML
     public void query() {
         if(!yearField.validate()) return;
@@ -105,6 +112,9 @@ public class SearchController {
 
     }
 
+    /**
+     * Resets the filter fields.
+     */
     @FXML
     public void clear() {
         rating.getSelectionModel().clearSelection();
@@ -115,12 +125,19 @@ public class SearchController {
         yearField.clear();
     }
 
+    /**
+     * Shows the dialog to select a path for a file's download.
+     */
     @FXML
     public void showDownload() {
         downloadDialog.setTransitionType(JFXDialog.DialogTransition.CENTER);
         downloadDialog.show((StackPane) context.getRegisteredObject("Root"));
     }
 
+    /**
+     * Registers a file in the active downloads. If we have already downloaded the file or we are currently downloading it,
+     * an error notification is shown and the registration is aborted.
+     */
     @FXML
     public void download() {
         if(catalogTreeTableView.getSelectionModel().getSelectedItem() == null){
@@ -132,7 +149,6 @@ public class SearchController {
         NoteMetaData info = catalogTreeTableView.getSelectionModel().getSelectedItem().getValue().getNoteMetaData();
 
         Note n = noteDAO.read(info.getTitle());
-
         if(n != null) {
             Notifications.exception(new Exception("Possiedi già questo file."));
             return;
@@ -152,6 +168,9 @@ public class SearchController {
         downloadDialog.close();
     }
 
+    /**
+     * Loads the table and the filter's components.
+     */
     @PostConstruct
     public void init() {
         setupCatalogTableView();
@@ -162,6 +181,9 @@ public class SearchController {
         rating.setItems(ratingsValue);
     }
 
+    /**
+     * Load a system-dependent interface to select a directory on which we're going to save the file.
+     */
     @FXML
     private void searchPath(){
         DirectoryChooser directoryChooser = new DirectoryChooser();

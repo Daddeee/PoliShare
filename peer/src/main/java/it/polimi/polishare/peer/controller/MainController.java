@@ -20,6 +20,9 @@ import javafx.util.Duration;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 
+/**
+ * Manages the main unauthenticated view.
+ */
 @ViewController(value = "/view/Main.fxml", title = "Polishare")
 public class MainController {
     @FXMLViewFlowContext
@@ -38,6 +41,11 @@ public class MainController {
 
     private JFXPopup chatPopup;
 
+
+    /**
+     * Initialize the menus and the context.
+     * @throws FlowException
+     */
     @PostConstruct
     public void init() throws FlowException {
         drawer.setOnDrawerOpening(e -> {
@@ -77,6 +85,9 @@ public class MainController {
         drawer.setSidePane(sideMenuFlowHandler.start(new AnimatedFlowContainer(Duration.millis(320))));
     }
 
+    /**
+     * Display the chat's popup.
+     */
     @FXML
     public void showChat() {
         double popupHeight = drawer.getHeight()*4/5;

@@ -10,8 +10,15 @@ import javafx.scene.control.TextInputControl;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * A validator to test if the path entered by the user in a JFXTextField corresponds to a valid PDF file.
+ */
 @DefaultProperty("icon")
 public class PdfValidator extends ValidatorBase {
+    /**
+     * Check if the entered path is not null and corresponds to a valid PDF file.
+     * For a pdf file to be valid it must not be bigger than 10 MB.
+     */
     @Override
     protected void eval() {
         ContentInfoUtil util = new ContentInfoUtil();
