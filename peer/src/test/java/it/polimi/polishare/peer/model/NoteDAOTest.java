@@ -56,7 +56,7 @@ public class NoteDAOTest {
     }
 
     @Test
-    public void createReturnsNullIfNothingIsFound() {
+    public void readReturnsNullIfNothingIsFound() {
         assertNull(noteDAO.read("dummy"));
     }
 
