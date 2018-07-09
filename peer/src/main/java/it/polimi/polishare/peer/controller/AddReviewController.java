@@ -172,9 +172,11 @@ public class AddReviewController {
             try{
                 CurrentSession.getDHT().exec(note.getTitle(), new UpdateReviewOperation(newReview));
                 NoteMetaData noteMetaData = CurrentSession.getDHT().get(note.getTitle());
-                catalogController.updateData(noteMetaData);
-                catalogController.getPopup().hide();
-                Platform.runLater(() -> Notifications.confirmation("Recensione aggiunta con successo."));
+                Platform.runLater(() -> {
+                    catalogController.getPopup().hide();
+                    catalogController.updateData(noteMetaData);
+                    Notifications.confirmation("Recensione salvata con successo.");
+                });
             } catch (DHTException ex){
                 Platform.runLater(() -> Notifications.exception(ex));
             }

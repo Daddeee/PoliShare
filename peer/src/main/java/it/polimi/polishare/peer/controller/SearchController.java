@@ -20,8 +20,10 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.TreeTableColumn;
-import javafx.scene.control.TreeTableView;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Bounds;
+import javafx.scene.Parent;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.stage.DirectoryChooser;
@@ -29,6 +31,7 @@ import javafx.stage.Stage;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -75,6 +78,8 @@ public class SearchController {
     private JFXTextField path;
     @FXML
     private JFXSpinner searchSpinner;
+    @FXML
+    private JFXPopup popup;
 
     private BooleanProperty isSearching = new SimpleBooleanProperty(false);
 
@@ -174,6 +179,7 @@ public class SearchController {
     @PostConstruct
     public void init() {
         setupCatalogTableView();
+        setupContextMenu();
         searchSpinner.visibleProperty().bind(isSearching);
 
         ObservableList<Integer> ratingsValue = FXCollections.observableArrayList();
@@ -193,6 +199,42 @@ public class SearchController {
         if(file != null) {
             path.setText(file.getPath());
         }
+    }
+
+    private void setupContextMenu() {
+        catalogTreeTableView.setRowFactory(noteInfosTreeTableView -> {
+            final TreeTableRow<SearchTreeTableNoteMetaData> row = new TreeTableRow<>();
+            final ContextMenu contextMenu = new ContextMenu();
+
+            MenuItem reviews = new MenuItem("Visualizza Recensioni");
+            reviews.setOnAction(e -> showReviewsPopup(row));
+            contextMenu.getItems().addAll(reviews);
+
+            row.setContextMenu(contextMenu);
+            return row;
+        });
+    }
+
+    private void showReviewsPopup(TreeTableRow<SearchTreeTableNoteMetaData> row) {
+        double popupHeight = catalogTreeTableView.getHeight()*4/5;
+        double popupWidth = catalogTreeTableView.getWidth()*4/5;
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/popup/Reviews.fxml"));
+            popup = new JFXPopup(loader.load());
+
+            Note n = new Note(row.getTreeItem().getValue().noteMetaData.getTitle(), "");
+            n.setNoteMetaData(row.getTreeItem().getValue().noteMetaData);
+            ((ReviewsController) loader.getController()).initData(n, popupHeight, popupWidth);
+        } catch (IOException ioExc) {
+            ioExc.printStackTrace();
+        }
+        Parent root = (Parent) context.getRegisteredObject("Root");
+        Bounds rootBounds = root.getLayoutBounds();
+
+        popup.show(root, JFXPopup.PopupVPosition.TOP, JFXPopup.PopupHPosition.LEFT,
+                (rootBounds.getWidth() - popupWidth) / 2,
+                (rootBounds.getHeight() - popupHeight) / 2);
     }
 
     private void setupCatalogTableView() {

@@ -15,18 +15,18 @@ public class DB {
                 "mail          VARCHAR(40) UNIQUE NOT NULL" +
                 ");";
 
-        String addUserQuery = "INSERT INTO users (username, password, mail) VALUES (?, ?, ?)";
+        //String addUserQuery = "INSERT INTO users (username, password, mail) VALUES (?, ?, ?)";
         Connection c = getConnection();
 
         Statement stmnt = c.createStatement();
         stmnt.executeUpdate(createNotesTable);
         stmnt.close();
 
-        PreparedStatement addUser = c.prepareStatement(addUserQuery);
+        /*PreparedStatement addUser = c.prepareStatement(addUserQuery);
         addUser.setString(1, App.DHT_NAME);
         addUser.setString(2, new RandomString(20).nextString());
         addUser.setString(3, "polishare@outlook.com");
-        addUser.executeUpdate();
+        addUser.executeUpdate();*/
 
         c.close();
     }
