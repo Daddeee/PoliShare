@@ -67,7 +67,7 @@ class DownloadManagerTest {
     }
 
     @Test
-    void start() throws IOException, NoSuchFieldException, IllegalAccessException {
+    void downloadFile() throws IOException, NoSuchFieldException, IllegalAccessException {
         NoteMetaData noteMetaData = new NoteMetaData("Titolo", "Autore", "Materia", "Professore", 2018);
         noteMetaData.addOwner(downloader1);
         noteMetaData.addOwner(downloader2);
