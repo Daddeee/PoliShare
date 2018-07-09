@@ -20,6 +20,9 @@ import java.rmi.RemoteException;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 
+/**
+ * Manages the chat's popup.
+ */
 public class ChatController {
     @FXML
     private VBox root;
