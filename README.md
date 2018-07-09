@@ -2,7 +2,7 @@
 
 ## Installazione
 
-All'interno della directory 'artifacts' è possibile trovare i JAR per l'avvio dell'applicazione, con i relativi file di configurazione già pronti per l'utilizzo dell'app in locale. Per poter utilizzare l'applicazione è necessario Java 8.
+All'interno della directory 'artifacts' è possibile trovare i JAR per l'avvio dell'applicazione, con i relativi file di configurazione già pronti per l'utilizzo dell'app su una sola macchina. Per poter utilizzare l'applicazione è necessario Java 8.
 
 Prima di avviare un peer è necessario attivare il server con il comando 'java -jar server.jar', dopodichè con lo stesso comando si può procedere all'avvio dei peer.
 
