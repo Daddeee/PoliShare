@@ -138,6 +138,12 @@ public class SearchController {
             return;
         }
 
+        if(DownloadManager.getActiveDownloads().get(info.getTitle()) != null) {
+            Notifications.exception(new Exception("Questo file è già in download."));
+            return;
+        }
+
+
         String path = this.path.getText();
         Note newNote = new Note(info.getTitle(), path + "/" + info.getTitle() + ".pdf");
         newNote.setNoteMetaData(info);
