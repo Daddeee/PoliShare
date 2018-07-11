@@ -188,7 +188,7 @@ public class CatalogController {
             delete.setOnAction(e -> ThreadPool.getInstance().execute(() -> deleteFile(row)));
 
             MenuItem deleteWithData = new MenuItem("Elimina e rimuovi file");
-            delete.setOnAction(e -> ThreadPool.getInstance().execute(() -> deleteFileAndData(row)));
+            deleteWithData.setOnAction(e -> ThreadPool.getInstance().execute(() -> deleteFileAndData(row)));
 
             contextMenu.getItems().addAll(open, reviews, addReview, delete, deleteWithData);
 
