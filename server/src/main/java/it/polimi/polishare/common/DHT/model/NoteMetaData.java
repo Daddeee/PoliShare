@@ -3,9 +3,8 @@ package it.polimi.polishare.common.DHT.model;
 import it.polimi.polishare.common.download.Downloader;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.rmi.RemoteException;
+import java.util.*;
 
 public class NoteMetaData implements Serializable {
     private String title;
@@ -14,7 +13,7 @@ public class NoteMetaData implements Serializable {
     private String teacher;
     private int year;
     private List<ReviewMetaData> reviewsMetaData;
-    private List<Downloader> owners;
+    private Map<String, Downloader> owners;
 
     public NoteMetaData(String title, String author, String subject, String teacher, int year) {
         this.title = title;
@@ -23,7 +22,7 @@ public class NoteMetaData implements Serializable {
         this.teacher = teacher;
         this.year = year;
         this.reviewsMetaData = new ArrayList<>();
-        this.owners = new ArrayList<>();
+        this.owners = new HashMap<>();
     }
 
     public String getTitle() {
@@ -80,16 +79,23 @@ public class NoteMetaData implements Serializable {
     }
 
     public List<Downloader> getOwners() {
-        return owners;
+        return new ArrayList<>(owners.values());
     }
 
     public void addOwner(Downloader owner) {
-        this.owners.remove(owner);
-        this.owners.add(owner);
+        try{
+            this.owners.put(owner.getUsername(), owner);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
     public void removeOwner(Downloader owner) {
-        this.owners.remove(owner);
+        try{
+            this.owners.remove(owner.getUsername());
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
     public double averageRating() {

@@ -39,7 +39,6 @@ public class App  extends Application {
 
         try {
             DB.setUp();
-            dw = new DownloaderImpl();
 
             Registry registry = LocateRegistry.getRegistry(Settings.getProperty("server_ip"));
             sf = (SessionFactory) registry.lookup("session_factory");

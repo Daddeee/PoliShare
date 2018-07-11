@@ -15,9 +15,16 @@ import java.util.Arrays;
 
 public class DownloaderImpl extends UnicastRemoteObject implements Downloader {
     private NoteDAO noteDAO;
+    private String username;
 
-    public DownloaderImpl() throws RemoteException {
+    public DownloaderImpl(String username) throws RemoteException {
         this.noteDAO = new NoteDAO();
+        this.username = username;
+    }
+
+    @Override
+    public String getUsername() {
+        return username;
     }
 
     @Override

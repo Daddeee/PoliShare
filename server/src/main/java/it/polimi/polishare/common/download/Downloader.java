@@ -8,4 +8,6 @@ public interface Downloader extends Remote {
     String getMD5(String title) throws RemoteException;
     int getSize(String title) throws RemoteException;
     void ping() throws RemoteException;
+
+    String getUsername() throws RemoteException;
 }

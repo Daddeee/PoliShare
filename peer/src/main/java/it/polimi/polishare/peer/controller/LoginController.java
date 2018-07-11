@@ -17,6 +17,7 @@ import it.polimi.polishare.common.server.exceptions.LoginFailedException;
 import it.polimi.polishare.common.server.Session;
 import it.polimi.polishare.peer.App;
 import it.polimi.polishare.peer.network.DHT.DHTImpl;
+import it.polimi.polishare.peer.network.download.DownloaderImpl;
 import it.polimi.polishare.peer.network.server.ReverseSessionImpl;
 import it.polimi.polishare.peer.CurrentSession;
 import it.polimi.polishare.peer.utils.Notifications;
@@ -80,6 +81,8 @@ public class LoginController {
                 CurrentSession.setDHT(new DHTImpl<>(username.getText(), NoteMetaData.class));
                 CurrentSession.getDHT().join(Settings.getProperty("server_ip"), CurrentSession.getSession().getServerDHTName());
                 CurrentSession.getSession().setReverseSession(CurrentSession.getReverseSession());
+
+                App.dw = new DownloaderImpl(username.getText());
 
                 Platform.runLater(() -> {
                     try {
