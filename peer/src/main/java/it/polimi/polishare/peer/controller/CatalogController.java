@@ -8,6 +8,7 @@ import io.datafx.controller.flow.context.ViewFlowContext;
 import it.polimi.polishare.common.DHT.operations.AddOwnerOperation;
 import it.polimi.polishare.common.DHT.DHTException;
 import it.polimi.polishare.common.DHT.model.NoteMetaData;
+import it.polimi.polishare.common.download.Downloader;
 import it.polimi.polishare.peer.App;
 import it.polimi.polishare.peer.model.Note;
 import it.polimi.polishare.peer.model.NoteDAO;
@@ -186,7 +187,10 @@ public class CatalogController {
             MenuItem delete = new MenuItem("Elimina");
             delete.setOnAction(e -> ThreadPool.getInstance().execute(() -> deleteFile(row)));
 
-            contextMenu.getItems().addAll(open, reviews, addReview, delete);
+            MenuItem deleteWithData = new MenuItem("Elimina e rimuovi file");
+            delete.setOnAction(e -> ThreadPool.getInstance().execute(() -> deleteFileAndData(row)));
+
+            contextMenu.getItems().addAll(open, reviews, addReview, delete, deleteWithData);
 
             row.setContextMenu(contextMenu);
             return row;
@@ -236,7 +240,24 @@ public class CatalogController {
     private void deleteFile(TreeTableRow<CatalogTreeTableNoteMetaData> row) {
         try {
             CurrentSession.getDHT().exec(row.getTreeItem().getValue().title.get(), new RemoveOwnerOperation(App.dw));
+
+            List<Downloader> owners = CurrentSession.getDHT().get(row.getTreeItem().getValue().title.get()).getOwners();
+            if(owners.size() == 0) CurrentSession.getDHT().remove(row.getTreeItem().getValue().title.get());
+
+            NoteDAO noteDAO = new NoteDAO();
+            noteDAO.delete(row.getTreeItem().getValue().title.get());
+        } catch (DHTException ex) {
+            Notifications.exception(ex);
+        }
+    }
+
+    private void deleteFileAndData(TreeTableRow<CatalogTreeTableNoteMetaData> row) {
+        try {
+            CurrentSession.getDHT().exec(row.getTreeItem().getValue().title.get(), new RemoveOwnerOperation(App.dw));
             Files.deleteIfExists(Paths.get(row.getTreeItem().getValue().getNote().getPath()));
+
+            List<Downloader> owners = CurrentSession.getDHT().get(row.getTreeItem().getValue().title.get()).getOwners();
+            if(owners.size() == 0) CurrentSession.getDHT().remove(row.getTreeItem().getValue().title.get());
 
             data.remove(row.getItem());
 

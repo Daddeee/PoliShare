@@ -164,6 +164,7 @@ public class AddReviewController {
         newReview.setBody(newReviewBody.getText());
 
         if(count > 500) {
+            catalogController.getPopup().hide();
             Notifications.exception(new Exception("Le recensioni possono avere al massimo 500 parole."));
             return;
         }

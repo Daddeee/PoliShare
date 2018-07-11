@@ -40,7 +40,10 @@ public class DownloadManager {
 
     public static void register(Note note) {
         Downloader master = getMaster(note.getNoteMetaData());
-        if (master == null) throw new RuntimeException("Non è stata trovata nessuna sorgente disponibile al download.");
+        if (master == null){
+            Platform.runLater(() -> Notifications.exception(new RuntimeException("Non è stata trovata nessuna sorgente disponibile al download.")));
+            return;
+        }
 
         int size;
         String md5;
@@ -48,7 +51,8 @@ public class DownloadManager {
             size = master.getSize(note.getTitle());
             md5 = master.getMD5(note.getTitle());
         } catch (RemoteException e) {
-            throw new RuntimeException("Errore generico.");
+            Platform.runLater(() -> Notifications.exception(new RuntimeException("Errore generico.")));
+            return;
         }
 
         int chunkSize = calculateChunkSize(size);
